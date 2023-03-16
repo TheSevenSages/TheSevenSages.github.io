@@ -21,24 +21,25 @@
 </div>
 
 <div id="menu" style="text-align: left; margin: 0%; margin-bottom: 5%;">
-        <a class="menu_link" href="home.html" target="content">HOME</a>
+        <span class="menu_link" onclick="changeContent('home.html')">HOME</span>
         &nbsp;&nbsp;
-        <a class="menu_link" href="portfolio.html" target="content">PORTFOLIO</a>
+        <span class="menu_link" onclick="changeContent('portfolio.html')">PORTFOLIO</span>
         &nbsp;&nbsp;
-        <a class="menu_link" href="about.html" target="content">ABOUT</a>
+        <span class="menu_link" onclick="changeContent('about.html')">ABOUT</span>
         &nbsp;&nbsp;
-        <a class="menu_link" href="contact.html" target="content">CONTACT</a>
+        <span class="menu_link" onclick="changeContent('contact.html')">CONTACT</span>
+        <div id = "menu_indicator" class="menu_indicator"></div>
 </div>
-
-<button onclick="changeSize()"></button>
 
 <iframe name="content" id="content" src="home.html" title="Section" frameborder="1"></iframe>
 
 </body>
 
 <script>
-function changeSize() {
-        document.getElementById("content").style.height = '5000px';
+var frame = document.getElementById("content");
+var indicator = document.getElementById("menu_indicator");
+function changeContent(source) {
+        frame.src = source;
 }
 </script>
 
