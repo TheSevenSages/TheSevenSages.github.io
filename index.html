@@ -7,42 +7,55 @@
         <link rel = "stylesheet" href = "style.css">
 </head>
 
-<body style="margin: 20%; margin-top: 2%;">
-
-<div id="header">
-        <span style="font-size: 24px;">JACOB ROBINSON |</span>
-        <span style="font-size: 16px;">GAME DEVELOPER</span>
-        <div id="social_media">
-                <a href="https://www.linkedin.com/in/robinsonmjacob/" target="_blank">
-                        <img src="linkedinIcon.png" class="social_icon">
-                </a>
-        </div>
-        <hr>
-</div>
-
-<div id="menu" style="text-align: left; margin: 0%; margin-bottom: 5%;">
-        <span class="menu_link" onclick="changeContent('home.html', this)">HOME</span>
-        &nbsp;&nbsp;
-        <span class="menu_link" onclick="changeContent('portfolio.html', this)">PORTFOLIO</span>
-        &nbsp;&nbsp;
-        <span class="menu_link" onclick="changeContent('about.html', this)">ABOUT</span>
-        &nbsp;&nbsp;
-        <span class="menu_link" onclick="changeContent('contact.html', this)">CONTACT</span>
+<body>
+<div id="page">
         <div id = "menu_indicator" class="menu_indicator"></div>
+
+        <div id="header">
+                <span style="font-size: 24px;">JACOB ROBINSON |</span>
+                <span style="font-size: 16px;">GAME DEVELOPER</span>
+                <div id="social_media">
+                        <a href="https://www.linkedin.com/in/robinsonmjacob/" target="_blank">
+                                <img src="linkedinIcon.png" class="social_icon">
+                        </a>
+                </div>
+                <hr>
+        </div>
+
+        <div id="menu" style="text-align: left; margin: 0%; margin-bottom: 5%;">
+                <span class="menu_link" id="home" onclick="changeContent('home.html', this)">HOME</span>
+                &nbsp;&nbsp;
+                <span class="menu_link" id="portfolio" onclick="changeContent('portfolio.html', this)">PORTFOLIO</span>
+                &nbsp;&nbsp;
+                <span class="menu_link" id="about" onclick="changeContent('about.html', this)">ABOUT</span>
+                &nbsp;&nbsp;
+                <span class="menu_link" id="contact" onclick="changeContent('contact.html', this)">CONTACT</span>
+        </div>
+
+        <iframe name="content" id="content" src="home.html" title="Section" frameborder="1"></iframe>
 </div>
-
-<iframe name="content" id="content" src="home.html" title="Section" frameborder="1"></iframe>
-
 </body>
 
 <script>
 var frame = document.getElementById("content");
 var indicator = document.getElementById("menu_indicator");
-function changeContent(source, el) {
-        indicator.style.width = el.offsetWidth + 'px';
-        indicator.style.left = (el.offsetLeft - el.parentElement.offsetLeft) + 'px';
-        frame.src = source;
+var currMenuOption = document.getElementById("home");
+
+// Automatically sets the indicator to the "home" section
+indicator.style.width = currMenuOption.offsetWidth + 'px';
+indicator.style.top = (currMenuOption.offsetTop + 7) + 'px';
+indicator.style.left = (currMenuOption.offsetLeft - currMenuOption.parentElement.offsetLeft) + 'px';
+
+function changeContent(src, el) {
+        currMenuOption = el;
+        frame.src = src;
 }
+
+var i = setInterval(function() {
+        indicator.style.width = currMenuOption.offsetWidth + 'px';
+        indicator.style.top = (currMenuOption.offsetTop + 7) + 'px';
+        indicator.style.left = (currMenuOption.offsetLeft - currMenuOption.parentElement.offsetLeft) + 'px';
+}, 50);
 </script>
 
 </html>
