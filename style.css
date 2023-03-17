@@ -34,13 +34,10 @@
         margin-top: 10px;
 }
 .menu_indicator {
-        width: 100px;
-        height: 100px;
+        width: 41px;
+        height: 5px;
         left: 0px;
         position: relative;
-        background: red;
-        transition: left 2s;
-}
-.menu_indicator:active {
-        left: 50px;
+        background: black;
+        transition: left 1s, width 1s;
 }
