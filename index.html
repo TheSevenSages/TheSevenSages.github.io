@@ -57,10 +57,10 @@ indicator.style.left = (currMenuOption.offsetLeft - currMenuOption.parentElement
 function changeContent(src, el) {
         currMenuOption = el;
         frame.src = src;
-        document.getElementById("page").style.height = frame.contentWindow.document.body.scrollHeight + 300 + "px";
 }
 
 var i = setInterval(function() {
+        document.getElementById("page").style.height = frame.contentWindow.document.body.scrollHeight + 300 + "px";
         indicator.style.width = currMenuOption.offsetWidth + 'px';
         indicator.style.top = (currMenuOption.offsetTop + 7) + 'px';
         indicator.style.left = (currMenuOption.offsetLeft - currMenuOption.parentElement.offsetLeft) + 'px';
