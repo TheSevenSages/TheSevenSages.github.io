@@ -57,7 +57,7 @@ indicator.style.left = (currMenuOption.offsetLeft - currMenuOption.parentElement
 function changeContent(src, el) {
         currMenuOption = el;
         frame.src = src;
-        document.getElementById("page").style.height = frame.contentWindow.document.body.scrollHeight + "px";
+        document.getElementById("page").style.height = frame.contentWindow.document.body.scrollHeight + 300 + "px";
 }
 
 var i = setInterval(function() {
