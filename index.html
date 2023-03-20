@@ -15,7 +15,6 @@
 
         <link rel = "stylesheet" href = "style.css">
 </head>
-<script src="framing.js"></script>
 <body>
 <div id="page">
         <div id = "menu_indicator" class="menu_indicator"></div>
@@ -58,8 +57,7 @@ indicator.style.left = (currMenuOption.offsetLeft - currMenuOption.parentElement
 function changeContent(src, el) {
         currMenuOption = el;
         frame.src = src;
-        document.getElementById("page").style.height = 2000 + "px";
-        console.log(homeHeight);
+        document.getElementById("page").style.height = frame.contentWindow.body.scrollHeight + "px";
 }
 
 var i = setInterval(function() {
@@ -68,5 +66,4 @@ var i = setInterval(function() {
         indicator.style.left = (currMenuOption.offsetLeft - currMenuOption.parentElement.offsetLeft) + 'px';
 }, 50);
 </script>
-
 </html>
