@@ -23,7 +23,6 @@
 }
 .menu_link {
         color: black;
-        text-decoration: none;
         cursor: pointer;
 }
 .menu_link:active {
@@ -47,4 +46,10 @@
         position: relative;
         background: black;
         transition: left 1s, width 1s;
+}
+.basic_text {
+        color:  black;
+        font-size: 15px;
+        line-height: 20px;
+        font-family: Georgia, 'Times New Roman', Times, serif;
 }

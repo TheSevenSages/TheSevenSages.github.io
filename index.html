@@ -22,24 +22,25 @@
                 <hr>
         </div>
 
-        <div id="menu" style="text-align: left; margin: 0%; margin-bottom: 5%;">
-                <span class="menu_link" id="home" onclick="changeContent('home.html', this)">HOME</span>
+        <div id="menu" style="text-align: left; margin: 0%; margin-bottom: 1%;">
+                <span class="menu_link" id="menu_home" onclick="changeContent('home.html', this)">HOME</span>
                 &nbsp;&nbsp;
-                <span class="menu_link" id="portfolio" onclick="changeContent('portfolio.html', this)">PORTFOLIO</span>
+                <span class="menu_link" id="menu_portfolio" onclick="changeContent('portfolio.html', this)">PORTFOLIO</span>
                 &nbsp;&nbsp;
-                <span class="menu_link" id="about" onclick="changeContent('about.html', this)">ABOUT</span>
+                <span class="menu_link" id="menu_about" onclick="changeContent('about.html', this)">ABOUT</span>
                 &nbsp;&nbsp;
-                <span class="menu_link" id="contact" onclick="changeContent('contact.html', this)">CONTACT</span>
+                <span class="menu_link" id="menu_contact" onclick="changeContent('contact.html', this)">CONTACT</span>
         </div>
 
-        <iframe name="content" id="content" src="home.html" title="Section" frameborder="1"></iframe>
+        <iframe name="content" id="content" src="home.html" title="Section" frameborder="0"></iframe>
+
 </div>
 </body>
 
 <script>
 var frame = document.getElementById("content");
 var indicator = document.getElementById("menu_indicator");
-var currMenuOption = document.getElementById("home");
+var currMenuOption = document.getElementById("menu_home");
 
 // Automatically sets the indicator to the "home" section
 indicator.style.width = currMenuOption.offsetWidth + 'px';
