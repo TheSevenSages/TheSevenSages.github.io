@@ -40,7 +40,7 @@
                 <span class="menu_link" id="menu_contact" onclick="changeContent('contact.html', this)">CONTACT</span>
         </div>
 
-        <iframe name="content" id="content" src="home.html" title="Section" frameborder="0"></iframe>
+        <iframe name="content" class="active_content" id="content" src="home.html" title="Section" frameborder="0"></iframe>
 
 </div>
 </body>
@@ -48,6 +48,7 @@
 var frame = document.getElementById("content");
 var indicator = document.getElementById("menu_indicator");
 var currMenuOption = document.getElementById("menu_home");
+var isTransitioning = false;
 
 // Automatically sets the indicator to the "home" section
 indicator.style.width = currMenuOption.offsetWidth + 'px';
@@ -55,8 +56,18 @@ indicator.style.top = (currMenuOption.offsetTop + 7) + 'px';
 indicator.style.left = (currMenuOption.offsetLeft - currMenuOption.parentElement.offsetLeft) + 'px';
 
 function changeContent(src, el) {
-        currMenuOption = el;
-        frame.src = src;
+        if (el != currMenuOption && !isTransitioning) {
+                isTransitioning = true;
+                frame.classList.add("inactive_content");
+                frame.classList.remove("active_content");
+                currMenuOption = el;
+                setTimeout(()=>{
+                        frame.src = src;
+                        frame.classList.add("active_content");
+                        frame.classList.remove("inactive_content");
+                }, 200);
+                isTransitioning = false;
+        }
 }
 
 var i = setInterval(function() {

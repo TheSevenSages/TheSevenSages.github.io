@@ -16,6 +16,14 @@
         height: 100%;
         position: relative;
 }
+.active_content {
+        opacity: 100%;
+        transition: opacity 0.5s;
+}
+.inactive_content {
+        opacity: 0%;
+        transition: opacity 0.5s;
+}
 #menu {
         color:  black;
         font-size: 16.5px;
