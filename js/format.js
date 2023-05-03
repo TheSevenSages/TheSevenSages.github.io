@@ -4,7 +4,8 @@ var currMenuOption;
 // on document load...
 $(document).ready(function(){
 
-        ChangeContent($('#menu_home'));
+        MenuClick($('#menu_home'));
+        $('#menu_home').addClass("current_tab");
 
         // switches content and activates transition
         $('.menu_link').click(function(){
@@ -20,32 +21,27 @@ $(document).ready(function(){
         $('#myModal').click(function(){
                 $(this).css("display", "none");
         });
-
-        // Automatically sets the indicator to the "home" section
-        $('#menu_indicator').css({
-                "width" : currMenuOption.offsetWidth + 'px',
-                "top"   : (currMenuOption.offsetTop + 7) + 'px',
-                "left"  : (currMenuOption.offsetLeft - currMenuOption.parentElement.offsetLeft) + 'px'
-        });
       
 });
 
 // exectutes every 50 milliseconds
 var i = setInterval(function() {
         // updates the page height
-        var newHeight = $('#content').contentWindow.document.body.scrollHeight + 300 + "px";
-        $('#page').css("height", newHeight);
+        // var newHeight = $('#content').contentWindow.document.body.scrollHeight + 300 + "px";
+        // $('#page').css("height", newHeight);
 
         // updates the menu indicator's position
+        $('#menu_indicator').show();
         $('#menu_indicator').css({
-                "width" : currMenuOption.offsetWidth + 'px',
-                "top"   : (currMenuOption.offsetTop + 7) + 'px',
-                "left"  : (currMenuOption.offsetLeft - currMenuOption.parentElement.offsetLeft) + 'px'
+                "width" : $('.current_tab').outerWidth() + 'px',
+                "top"   : ($('.current_tab').offset().top + 7) + 'px',
+                "left"  : ($('.current_tab').offset().left - $('#menu').offset().left) + 'px'
         });
 }, 50);
 
 function MenuClick(source) {
-        currMenuOption = source;
+        $('.current_tab').removeClass("current_tab");
+        $(source).addClass("current_tab");
         ChangeContent(source);
 }
 
