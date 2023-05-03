@@ -42,6 +42,7 @@ var i = setInterval(function() {
 function MenuClick(source) {
         $('.current_tab').removeClass("current_tab");
         $(source).addClass("current_tab");
+
         ChangeContent(source);
 }
 
@@ -49,17 +50,25 @@ function MenuClick(source) {
 function ChangeContent(source) {
         var sourceFile = $(source).attr('id').replace('menu_', '');
         sourceFile = sourceFile.replace('..', '') + '.html';
+
+        // animate the transitions
+        $('#content').fadeOut();
+        $('#content').fadeIn();
+
         $.get('content/' + sourceFile, function(data) {
                 $('#content').html(data); 
         });
 }
 
- // activates the modal
- function ActivateModal(img){
+
+
+// activates the modal
+function ActivateModal(img){
+        alert("MODAL CLICKED");
         $('#img01').css("paddingTop", (img.parentElement.parentElement.offsetTop) + "px");
         $('#img01').attr("src", img.src);
         $('#myModal').css("display", "block");
         $('#caption').text(img.alt);
- }
+}
 
 
