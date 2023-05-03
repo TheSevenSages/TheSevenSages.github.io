@@ -13,11 +13,15 @@
         <meta name="msapplication-TileColor" content="#da532c">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel = "stylesheet" href = "style.css">
+        <link rel = "stylesheet" href = "css/style.css">
+        <link rel = "stylesheet" href = "css/modal.css">
+        
+        <script type="text/javascript" src="js/jquery-3.6.4.min.js"></script>
+        <script type="text/javascript" src="js/format.js"></script>
 </head>
 <body>
 <div id="page">
-        <div id = "menu_indicator" class="menu_indicator"></div>
+        <div id="menu_indicator" style="display: none;" class="menu_indicator"></div>
 
         <div id="header">
                 <span style="font-size: 24px;">JACOB ROBINSON |</span>
@@ -31,50 +35,17 @@
         </div>
 
         <div id="menu" style="text-align: left; margin: 0%; margin-bottom: 1%;">
-                <span class="menu_link" id="menu_home" onclick="changeContent('home.html', this)">HOME</span>
+                <span class="menu_link" id="menu_home">HOME</span>
                 &nbsp;&nbsp;
-                <span class="menu_link" id="menu_portfolio" onclick="changeContent('portfolio.html', this)">PORTFOLIO</span>
+                <span class="menu_link" id="menu_portfolio">PORTFOLIO</span>
                 &nbsp;&nbsp;
-                <span class="menu_link" id="menu_about" onclick="changeContent('about.html', this)">ABOUT</span>
+                <span class="menu_link" id="menu_about">ABOUT</span>
                 <!-- &nbsp;&nbsp;
                 <span class="menu_link" id="menu_contact" onclick="changeContent('contact.html', this)">CONTACT</span> -->
         </div>
 
-        <iframe name="content" class="active_content" id="content" src="home.html" title="Section" frameborder="0"></iframe>
+        <div name="content" id="content" title="Section" frameborder="0"></div>
 
 </div>
 </body>
-<script>
-var frame = document.getElementById("content");
-var indicator = document.getElementById("menu_indicator");
-var currMenuOption = document.getElementById("menu_home");
-var isTransitioning = false;
-
-// Automatically sets the indicator to the "home" section
-indicator.style.width = currMenuOption.offsetWidth + 'px';
-indicator.style.top = (currMenuOption.offsetTop + 7) + 'px';
-indicator.style.left = (currMenuOption.offsetLeft - currMenuOption.parentElement.offsetLeft) + 'px';
-
-function changeContent(src, el) {
-        if (el != currMenuOption && !isTransitioning) {
-                isTransitioning = true;
-                frame.classList.add("inactive_content");
-                frame.classList.remove("active_content");
-                currMenuOption = el;
-                setTimeout(()=>{
-                        frame.src = src;
-                        frame.classList.add("active_content");
-                        frame.classList.remove("inactive_content");
-                }, 200);
-                isTransitioning = false;
-        }
-}
-
-var i = setInterval(function() {
-        document.getElementById("page").style.height = frame.contentWindow.document.body.scrollHeight + 300 + "px";
-        indicator.style.width = currMenuOption.offsetWidth + 'px';
-        indicator.style.top = (currMenuOption.offsetTop + 7) + 'px';
-        indicator.style.left = (currMenuOption.offsetLeft - currMenuOption.parentElement.offsetLeft) + 'px';
-}, 50);
-</script>
 </html>

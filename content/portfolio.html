@@ -1,13 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-        <meta charset="UTF-8">
-        <title>portfolio</title>
-        <link rel = "stylesheet" href = "style.css">
-        <link rel = "stylesheet" href = "modal.css">
-</head>
-<body>
-
 <h1 style="text-align: center;">Portfolio</h1>
 <div class="basic_text" style="text-align: center;">
         <div id="CoC">
@@ -33,10 +23,10 @@
                 </p>
 
                 <div style="margin-bottom: 20%;">
-                        <img src="Images/CoC/MainCapsule.PNG" onclick="activateModal(this)" alt="Title art" style="left: 0%;" class="portfolio_img">
-                        <img src="Images/CoC/FinalBoss.png" onclick="activateModal(this)" alt="Fight your demons" style="left: 25%;" class="portfolio_img">
-                        <img src="Images/CoC/Combat.gif" onclick="activateModal(this)" alt="Experience thrilling battles" style="left: 50%;" class="portfolio_img">
-                        <img src="Images/CoC/Shop.png" onclick="activateModal(this)" alt="Purchase powerful upgrades" style="left: 75%;" class="portfolio_img">
+                        <img src="Images/CoC/MainCapsule.PNG" alt="Title art" style="left: 0%;" class="portfolio_img">
+                        <img src="Images/CoC/FinalBoss.png" alt="Fight your demons" style="left: 25%;" class="portfolio_img">
+                        <img src="Images/CoC/Combat.gif" alt="Experience thrilling battles" style="left: 50%;" class="portfolio_img">
+                        <img src="Images/CoC/Shop.png" alt="Purchase powerful upgrades" style="left: 75%;" class="portfolio_img">
                 </div>
         </div>
 
@@ -64,10 +54,10 @@
                         View my Devblog from fall 2022 <a href="https://jacobrobinsonblog.weebly.com" target="_blank">HERE</a>.
                 </p>
                 <div style="margin-bottom: 20%;">
-                        <img src="Images/Subtension/Subtension Title Art.png" onclick="activateModal(this)" alt="Title art" style="left: 0%;" class="portfolio_img">
-                        <img src="Images/Subtension/SubtensionSC1.png" onclick="activateModal(this)" alt="Fight enemy ships" style="left: 25%;" class="portfolio_img">
-                        <img src="Images/Subtension/SubtensionSC2.png" onclick="activateModal(this)" alt="Experience the story" style="left: 50%;" class="portfolio_img">
-                        <img src="Images/Subtension/SubtensionSC3.png" onclick="activateModal(this)" alt="Upgrade your ship" style="left: 75%;" class="portfolio_img">
+                        <img src="Images/Subtension/Subtension Title Art.png" alt="Title art" style="left: 0%;" class="portfolio_img">
+                        <img src="Images/Subtension/SubtensionSC1.png" alt="Fight enemy ships" style="left: 25%;" class="portfolio_img">
+                        <img src="Images/Subtension/SubtensionSC2.png" alt="Experience the story" style="left: 50%;" class="portfolio_img">
+                        <img src="Images/Subtension/SubtensionSC3.png" alt="Upgrade your ship" style="left: 75%;" class="portfolio_img">
                 </div>
         </div>
 
@@ -89,10 +79,10 @@
                         Download the game from it's Itch.io page <a href="https://thesevensages.itch.io/moles-voles-and-trolls" target="_blank">HERE</a>.
                 </p>
                 <div style="margin-bottom: 20%;">
-                        <img src="Images/MVT/MVTtitle.png" onclick="activateModal(this)" alt="Title screen" style="left: 0%;" class="portfolio_img">
-                        <img src="Images/MVT/MVTSC1.png" onclick="activateModal(this)" alt="Dig for materials" style="left: 25%;" class="portfolio_img">
-                        <img src="Images/MVT/MVTSC2.png" onclick="activateModal(this)" alt="Build up your tower" style="left: 50%;" class="portfolio_img">
-                        <img src="Images/MVT/MVTSC3.png" onclick="activateModal(this)" alt="Don't let the troll knock it down" style="left: 75%;" class="portfolio_img">
+                        <img src="Images/MVT/MVTtitle.png" alt="Title screen" style="left: 0%;" class="portfolio_img">
+                        <img src="Images/MVT/MVTSC1.png" alt="Dig for materials" style="left: 25%;" class="portfolio_img">
+                        <img src="Images/MVT/MVTSC2.png" alt="Build up your tower" style="left: 50%;" class="portfolio_img">
+                        <img src="Images/MVT/MVTSC3.png" alt="Don't let the troll knock it down" style="left: 75%;" class="portfolio_img">
                 </div>
         </div>
 
@@ -114,10 +104,10 @@
                         Download the game, or play it in browser, on the game's Itch.io page <a href="https://fivearcher76571.itch.io/overdeveloped" target="_blank">HERE</a>.
                 </p>
                 <div style="margin-bottom: 20%;">
-                        <img src="Images/Overdeveloped/OverdevelopedTitle.png" onclick="activateModal(this)" alt="Title Screen" style="left: 0%;" class="portfolio_img">
-                        <img src="Images/Overdeveloped/ODSC1.png" onclick="activateModal(this)" alt="Design your game" style="left: 25%;" class="portfolio_img">
-                        <img src="Images/Overdeveloped/ODSC2.png" onclick="activateModal(this)" alt="Develop the game" style="left: 50%;" class="portfolio_img">
-                        <img src="Images/Overdeveloped/Manual.pdf" onclick="activateModal(this)" alt="Decipher the mysterious hints" style="left: 75%;" class="portfolio_img">
+                        <img src="Images/Overdeveloped/OverdevelopedTitle.png" alt="Title Screen" style="left: 0%;" class="portfolio_img">
+                        <img src="Images/Overdeveloped/ODSC1.png" alt="Design your game" style="left: 25%;" class="portfolio_img">
+                        <img src="Images/Overdeveloped/ODSC2.png" alt="Develop the game" style="left: 50%;" class="portfolio_img">
+                        <img src="Images/Overdeveloped/Manual.pdf" alt="Decipher the mysterious hints" style="left: 75%;" class="portfolio_img">
                 </div>
         </div>
 </div>
@@ -131,26 +121,25 @@
         <!-- Modal Caption (Image Text) -->
         <div id="caption"></div>
 </div>
-
-</body>
 <script>
-        // Get the modal
-        var modal = document.getElementById("myModal");
-        var modalImg = document.getElementById("img01");
-        var captionText = document.getElementById("caption");
-        function activateModal(el){
-                modalImg.style.paddingTop = (el.parentElement.parentElement.offsetTop) + "px";
-                modal.style.display = "block";
-                modalImg.src = el.src;
-                captionText.innerHTML = el.alt;
-        }
+        $(document).ready(function(){
 
-        // Get the <span> element that closes the modal
-        var span = document.getElementsByClassName("close")[0];
+                // opens the modal
+                $('.portfolio_img').click(function(){
+                        ActivateModal(this);
+                });
 
-        // When the user clicks on <span> (x), close the modal
-        modal.onclick = function() { 
-                modal.style.display = "none";
+                // closes the modal
+                $('#myModal').click(function(){
+                        $(this).css("display", "none");
+                });
+        });
+        
+
+        // activates the modal
+        function ActivateModal(img){
+                $('#img01').attr("src", img.src);
+                $('#myModal').css("display", "block");
+                $('#caption').text(img.alt);
         }
 </script>
-</html>
