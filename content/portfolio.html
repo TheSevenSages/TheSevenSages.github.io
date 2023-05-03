@@ -138,7 +138,6 @@
 
         // activates the modal
         function ActivateModal(img){
-                $('#img01').css("paddingTop", (img.parentElement.parentElement.offsetTop) + "px");
                 $('#img01').attr("src", img.src);
                 $('#myModal').css("display", "block");
                 $('#caption').text(img.alt);

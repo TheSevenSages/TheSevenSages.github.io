@@ -4,7 +4,7 @@ var currMenuOption;
 // on document load...
 $(document).ready(function(){
 
-        MenuClick($('#menu_home'));
+        ChangeContent($('#menu_home'), false);
         $('#menu_home').addClass("current_tab");
 
         // switches content and activates transition
@@ -28,24 +28,26 @@ var i = setInterval(function() {
         });
 }, 50);
 
-function MenuClick(source) {
+function MenuClick(source, animate) {
         $('.current_tab').removeClass("current_tab");
         $(source).addClass("current_tab");
 
-        ChangeContent(source);
+        ChangeContent(source, true);
 }
 
 // changes content to page specified by source
-function ChangeContent(source) {
+function ChangeContent(source, animate) {
         var sourceFile = $(source).attr('id').replace('menu_', '');
         sourceFile = sourceFile.replace('..', '') + '.html';
 
         // animate the transitions
-        $('#content').fadeOut(500, function(){
-                $.get('content/' + sourceFile, function(data) {
-                        $('#content').html(data); 
+        if (animate) {
+                $('#content').fadeOut(500, function(){
+                        $.get('content/' + sourceFile, function(data) {
+                                $('#content').html(data); 
+                        });
                 });
-        });
-        $('#content').fadeIn(500);
+                $('#content').fadeIn(500);
+        }
 }
 
