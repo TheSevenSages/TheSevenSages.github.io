@@ -11,17 +11,6 @@ $(document).ready(function(){
         $('.menu_link').click(function(){
                 MenuClick(this);
         });
-
-        // opens the modal
-        $('.portfolio_img').click(function(){
-                ActivateModal(this);
-        });
-
-        // closes the modal
-        $('#myModal').click(function(){
-                $(this).css("display", "none");
-        });
-      
 });
 
 // exectutes every 50 milliseconds
@@ -52,23 +41,11 @@ function ChangeContent(source) {
         sourceFile = sourceFile.replace('..', '') + '.html';
 
         // animate the transitions
-        $('#content').fadeOut();
-        $('#content').fadeIn();
-
-        $.get('content/' + sourceFile, function(data) {
-                $('#content').html(data); 
+        $('#content').fadeOut(500, function(){
+                $.get('content/' + sourceFile, function(data) {
+                        $('#content').html(data); 
+                });
         });
+        $('#content').fadeIn(500);
 }
-
-
-
-// activates the modal
-function ActivateModal(img){
-        alert("MODAL CLICKED");
-        $('#img01').css("paddingTop", (img.parentElement.parentElement.offsetTop) + "px");
-        $('#img01').attr("src", img.src);
-        $('#myModal').css("display", "block");
-        $('#caption').text(img.alt);
-}
-
 
