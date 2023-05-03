@@ -1,14 +1,53 @@
+// variables
+var currMenuOption;
 
 // on document load...
 $(document).ready(function(){
 
         ChangeContent($('#menu_home'));
 
+        // switches content and activates transition
         $('.menu_link').click(function(){
-                ChangeContent(this);
+                MenuClick(this);
+        });
+
+        // opens the modal
+        $('.portfolio_img').click(function(){
+                ActivateModal(this);
+        });
+
+        // closes the modal
+        $('#myModal').click(function(){
+                $(this).css("display", "none");
+        });
+
+        // Automatically sets the indicator to the "home" section
+        $('#menu_indicator').css({
+                "width" : currMenuOption.offsetWidth + 'px',
+                "top"   : (currMenuOption.offsetTop + 7) + 'px',
+                "left"  : (currMenuOption.offsetLeft - currMenuOption.parentElement.offsetLeft) + 'px'
         });
       
 });
+
+// exectutes every 50 milliseconds
+var i = setInterval(function() {
+        // updates the page height
+        var newHeight = $('#content').contentWindow.document.body.scrollHeight + 300 + "px";
+        $('#page').css("height", newHeight);
+
+        // updates the menu indicator's position
+        $('#menu_indicator').css({
+                "width" : currMenuOption.offsetWidth + 'px',
+                "top"   : (currMenuOption.offsetTop + 7) + 'px',
+                "left"  : (currMenuOption.offsetLeft - currMenuOption.parentElement.offsetLeft) + 'px'
+        });
+}, 50);
+
+function MenuClick(source) {
+        currMenuOption = source;
+        ChangeContent(source);
+}
 
 // changes content to page specified by source
 function ChangeContent(source) {
@@ -19,23 +58,12 @@ function ChangeContent(source) {
         });
 }
 
- // Get the modal
- var modal = document.getElementById("myModal");
- var modalImg = document.getElementById("img01");
- var captionText = document.getElementById("caption");
- function activateModal(el){
-         modalImg.style.paddingTop = (el.parentElement.parentElement.offsetTop) + "px";
-         modal.style.display = "block";
-         modalImg.src = el.src;
-         captionText.innerHTML = el.alt;
- }
-
- // Get the <span> element that closes the modal
- var span = document.getElementsByClassName("close")[0];
-
- // When the user clicks on <span> (x), close the modal
- modal.onclick = function() { 
-         modal.style.display = "none";
+ // activates the modal
+ function ActivateModal(img){
+        $('#img01').css("paddingTop", (img.parentElement.parentElement.offsetTop) + "px");
+        $('#img01').attr("src", img.src);
+        $('#myModal').css("display", "block");
+        $('#caption').text(img.alt);
  }
 
 
