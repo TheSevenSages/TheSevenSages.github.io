@@ -16,8 +16,8 @@ $(document).ready(function(){
 // exectutes every 50 milliseconds
 var i = setInterval(function() {
         // updates the page height
-        var newHeight = $('#content').height() + "px";
-        $('#page').css("height", newHeight);
+        // var newHeight = $('#content').height() + "px";
+        // $('#page').css("height", newHeight);
 
         // updates the menu indicator's position
         $('#menu_indicator').show();
@@ -30,7 +30,7 @@ var i = setInterval(function() {
 
 function MenuClick(source, animate) {
 
-        if ($('.current_tab') != source) {
+        if ($('.current_tab').attr('id') != $(source).attr('id')) {
                 $('.current_tab').removeClass("current_tab");
                 $(source).addClass("current_tab");
 

@@ -1,10 +1,22 @@
 <h1 style="text-align: center;">Portfolio</h1>
 <h3 style="text-align: center;">Click on a project to learn more!</h3>
+
+<div class="bg_img_portfolio">
+        <img id="background_img" src="Images/CoC/MainCapsule.PNG" style="border-radius: 10%; height: 100%; width: 100%;">
+</div>
+
 <div style="padding-bottom: 15%;">
-        <img src="Images/CoC/MainCapsule.PNG" alt="Title art" style="left: 0%;" onclick="SlidePanel($('#CoC'))" class="panel_img">
-        <img src="Images/Subtension/Subtension Title Art.png" alt="Title art" style="left: 25%;" onclick="SlidePanel($('#Subtension'))" class="panel_img">
-        <img src="Images/MVT/MVTtitle.png" alt="Title art" style="left: 50%;" onclick="SlidePanel($('#MVT'))" class="panel_img">
-        <img src="Images/Overdeveloped/OverdevelopedLogo.png" alt="Title art" style="left: 75%;" onclick="SlidePanel($('#Overdeveloped'))" class="panel_img">
+        <img src="Images/CoC/MainCapsule.PNG" alt="Title art" style="left: 0%;"
+                onmouseover="ChangeBackground('Images/CoC/MainCapsule.PNG')" onclick="SlidePanel($('#CoC'))" class="panel_img">
+
+        <img src="Images/Subtension/Subtension Title Art.png" alt="Title art" style="left: 26.25%;"
+                onmouseover="ChangeBackground('Images/Subtension/Subtension Title Art.png')" onclick="SlidePanel($('#Subtension'))" class="panel_img">
+
+        <img src="Images/MVT/MVTtitle.png" alt="Title art" style="left: 53.75%;" 
+                onmouseover="ChangeBackground('Images/MVT/MVTtitle.png')" onclick="SlidePanel($('#MVT'))" class="panel_img">
+
+        <img src="Images/Overdeveloped/OverdevelopedTitle.png" alt="Title art" style="left: 80%;" 
+                onmouseover="ChangeBackground('Images/Overdeveloped/OverdevelopedTitle.png')" onclick="SlidePanel($('#Overdeveloped'))" class="panel_img">
 </div>
 
 <div class="basic_text">
@@ -141,10 +153,16 @@
                 $('#caption').text(img.alt);
         }
 
+        // activates the correct panel
         function SlidePanel(panel){
                 $('.active_panel').css("display", "none");
                 $('.active_panel').removeClass("active_panel");
                 $(panel).addClass("active_panel");
-                $(panel).slideToggle();
+                $(panel).slideToggle("slow");
+        }
+
+        // // changes the image in the background
+        function ChangeBackground(newImg) {
+                $('#background_img').attr('src', newImg);
         }
 </script>
