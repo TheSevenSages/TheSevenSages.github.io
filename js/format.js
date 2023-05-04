@@ -4,20 +4,20 @@ var currMenuOption;
 // on document load...
 $(document).ready(function(){
 
-        ChangeContent($('#menu_home'), false);
+        MenuClick($('#menu_home'), false);
         $('#menu_home').addClass("current_tab");
 
         // switches content and activates transition
         $('.menu_link').click(function(){
-                MenuClick(this);
+                MenuClick(this, true);
         });
 });
 
 // exectutes every 50 milliseconds
 var i = setInterval(function() {
         // updates the page height
-        // var newHeight = $('#content').contentWindow.document.body.scrollHeight + 300 + "px";
-        // $('#page').css("height", newHeight);
+        var newHeight = $('#content').outerHeight() + 300 + "px";
+        $('#page').css("height", newHeight);
 
         // updates the menu indicator's position
         $('#menu_indicator').show();
@@ -29,10 +29,13 @@ var i = setInterval(function() {
 }, 50);
 
 function MenuClick(source, animate) {
-        $('.current_tab').removeClass("current_tab");
-        $(source).addClass("current_tab");
 
-        ChangeContent(source, true);
+        if ($('.current_tab') != source) {
+                $('.current_tab').removeClass("current_tab");
+                $(source).addClass("current_tab");
+
+                ChangeContent(source, animate);
+        }
 }
 
 // changes content to page specified by source
