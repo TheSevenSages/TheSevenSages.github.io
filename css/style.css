@@ -89,3 +89,23 @@
         -webkit-mask-repeat: no-repeat;
         mask-repeat: no-repeat; 
 }
+#contact_me_form {
+        padding: 10px;
+        padding-left: 10px;
+}
+#submit_button {
+        left: 150px;
+        width: 100px;
+        position: absolute;
+}
+.form_field {
+        border-style: solid;
+        border-width: 1px;
+        padding: 5px;
+        left: 150px;
+        width: 300px;
+        position: absolute;
+}
+.form_label {
+        position: absolute;
+}
