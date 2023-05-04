@@ -16,7 +16,7 @@ $(document).ready(function(){
 // exectutes every 50 milliseconds
 var i = setInterval(function() {
         // updates the page height
-        var newHeight = $('#content').outerHeight() + 300 + "px";
+        var newHeight = $('#content').height() + "px";
         $('#page').css("height", newHeight);
 
         // updates the menu indicator's position
@@ -51,6 +51,11 @@ function ChangeContent(source, animate) {
                         });
                 });
                 $('#content').fadeIn(500);
+        }
+        else {
+                $.get('content/' + sourceFile, function(data) {
+                        $('#content').html(data); 
+                });
         }
 }
 

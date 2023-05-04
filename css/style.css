@@ -53,6 +53,15 @@
         line-height: 20px;
         font-family: Georgia, 'Times New Roman', Times, serif;
 }
+.panel_img {
+        width: 20%;
+        padding: 20px;
+        position: absolute;
+        transition: width 1s;
+}
+.panel_img:hover {
+        width: 21%;
+}
 .portfolio_img {
         width: 20%;
         padding: 20px;

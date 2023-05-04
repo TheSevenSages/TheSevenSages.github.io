@@ -1,6 +1,14 @@
 <h1 style="text-align: center;">Portfolio</h1>
-<div class="basic_text" style="text-align: center;">
-        <div id="CoC">
+<h3 style="text-align: center;">Click on a project to learn more!</h3>
+<div style="padding-bottom: 15%;">
+        <img src="Images/CoC/MainCapsule.PNG" alt="Title art" style="left: 0%;" onclick="SlidePanel($('#CoC'))" class="panel_img">
+        <img src="Images/Subtension/Subtension Title Art.png" alt="Title art" style="left: 25%;" onclick="SlidePanel($('#Subtension'))" class="panel_img">
+        <img src="Images/MVT/MVTtitle.png" alt="Title art" style="left: 50%;" onclick="SlidePanel($('#MVT'))" class="panel_img">
+        <img src="Images/Overdeveloped/OverdevelopedLogo.png" alt="Title art" style="left: 75%;" onclick="SlidePanel($('#Overdeveloped'))" class="panel_img">
+</div>
+
+<div class="basic_text">
+        <div id="CoC" class="active_panel">
                 <h3 style="text-align: center;">Curse of the Corsair</h3>
                 <p>
                         <i>Curse of the Corsair</i> is a 2D action-adventure game made as a case study of <i>Hyper Light Drifter</i> by Heart Machine. It was developed in <b>Unity and C#</b> during the 2023 winter semester by WolverineSoft Studio:
@@ -30,10 +38,7 @@
                 </div>
         </div>
 
-        <br>
-        <br>
-
-        <div id="Subtension">
+        <div id="Subtension" style="display: none;">
                 <h3 style="text-align: center;">Subtension</h3>
                 <p>
                         <i>Subtension</i> is a real-time strategy game made as a case study of <i>FTL:Faster Than Light</i> by Subset Games. It was developed in <b>Unity and C#</b> over the 2022 summer and fall semesters by WolverineSoft Studio:
@@ -61,10 +66,7 @@
                 </div>
         </div>
 
-        <br>
-        <br>
-
-        <div id="MVT">
+        <div id="MVT" style="display: none;">
                 <h3 style="text-align: center;">Moles, Voles, and Trolls</h3>
                 <p>
                         <i>Moles, Voles, and Trolls</i> is a tower-stacker game where you dig up building materials in the dig phase, and then stack them as high as you can to get a high score.
@@ -86,10 +88,7 @@
                 </div>
         </div>
 
-        <br>
-        <br>
-
-        <div id="Overdeveloped">
+        <div id="Overdeveloped" style="display: none;">
                 <h3 style="text-align: center;">Overdeveloped</h3>
                 <p>
                         <i>Overdeveloped</i> is a multiplayer-strategy game based off of the games <i>Overcooked</i> by Team17 and <i>Keep Talking and Nobody Explodes</i> by Steel Crate Games.
@@ -107,7 +106,7 @@
                         <img src="Images/Overdeveloped/OverdevelopedTitle.png" alt="Title Screen" style="left: 0%;" class="portfolio_img">
                         <img src="Images/Overdeveloped/ODSC1.png" alt="Design your game" style="left: 25%;" class="portfolio_img">
                         <img src="Images/Overdeveloped/ODSC2.png" alt="Develop the game" style="left: 50%;" class="portfolio_img">
-                        <img src="Images/Overdeveloped/Manual.pdf" alt="Decipher the mysterious hints" style="left: 75%;" class="portfolio_img">
+                        <img src="Images/Overdeveloped/FirstPage.png" alt="Decipher the mysterious hints" style="left: 75%;" class="portfolio_img">
                 </div>
         </div>
 </div>
@@ -134,12 +133,18 @@
                         $(this).css("display", "none");
                 });
         });
-        
 
         // activates the modal
         function ActivateModal(img){
                 $('#img01').attr("src", img.src);
                 $('#myModal').css("display", "block");
                 $('#caption').text(img.alt);
+        }
+
+        function SlidePanel(panel){
+                $('.active_panel').css("display", "none");
+                $('.active_panel').removeClass("active_panel");
+                $(panel).addClass("active_panel");
+                $(panel).slideToggle();
         }
 </script>
