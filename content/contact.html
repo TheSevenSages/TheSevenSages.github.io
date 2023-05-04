@@ -1,16 +1,36 @@
-<!DOCTYPE html>
-<html>
-        <meta charset="UTF-8">
-        <title>contact</title>
-        <link rel = "stylesheet" href = "css/style.css">
-<head>
-</head>
-<body>
+<h1 style="text-align: center;">Contact Me</h1>
 
-<h1 style="text-align: center;">Contact</h1>
+<div class="basic_text" id="contact_me_form">
+        <form>
 
+                <label class="form_label" for="name">Name:</label>
+                <span>
+                        <input class="form_field" type="text" id="name" name="name">
+                </span>
+                
+                <br><br>
 
+                <label class="form_label" for="email">Email:</label>
+                <span> 
+                        <input class="form_field" type="email" id="email" name="email">
+                </span>
 
+                <br><br>
+                
+                <label class="form_label" for="subject">Subject:</label>
+                <span>
+                        <input class="form_field" type="text" id="subject" name="subject">
+                </span>
 
-</body>
-</html>
+                <br><br>
+
+                <label class="form_label" for="message">Message:</label>
+                <span>
+                        <textarea class="form_field" style="width: 400px; height: 100px; resize: none;" id="message" name="message"></textarea>
+                </span>
+
+                <br><br><br><br><br><br>
+
+                <input id="submit_button" type="submit" value="Submit">
+        </form> 
+</div>
