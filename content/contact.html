@@ -8,28 +8,28 @@
 
                 <label class="form_label" for="name">Name:</label>
                 <span>
-                        <input class="form_field" type="text" id="name" name="name">
+                        <input class="form_field" type="text" id="name" name="name" required>
                 </span>
                 
                 <br><br>
 
                 <label class="form_label" for="email">Email:</label>
                 <span> 
-                        <input class="form_field" type="email" id="email" name="email">
+                        <input class="form_field" type="email" id="email" name="email" required>
                 </span>
 
                 <br><br>
                 
                 <label class="form_label" for="subject">Subject:</label>
                 <span>
-                        <input class="form_field" type="text" id="subject" name="_subject">
+                        <input class="form_field" type="text" id="subject" name="_subject" required>
                 </span>
 
                 <br><br>
 
                 <label class="form_label" for="message">Message:</label>
                 <span>
-                        <textarea class="form_field" style="width: 400px; height: 100px; resize: none;" id="message" name="message"></textarea>
+                        <textarea class="form_field" style="width: 400px; height: 100px; resize: none;" id="message" name="message" required></textarea>
                 </span>
 
                 <br><br><br><br><br><br>
@@ -42,7 +42,7 @@
 function FormSubmit(form) {
         $.ajax({
                 method: 'POST',
-                url: 'https://formsubmit.co/ajax/6ace5f1aebfc0542355d9c4964af500e',
+                url: 'https://formsubmit.co/6ace5f1aebfc0542355d9c4964af500e',
                 dataType: 'json',
                 accepts: 'application/json',
                 data: {
