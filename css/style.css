@@ -55,11 +55,13 @@
         font-family: Georgia, 'Times New Roman', Times, serif;
 }
 .panel_img {
-        width: 20%;
-        border-radius: 25%;
+        width: 19.5%;
+        height: 100px;
+        border-radius: 0%;
         border-width: 0px;
         border-style: double;
-        position: absolute;
+        box-sizing: border-box;
+        position: relative;
         border-color: rgb(218, 58, 58);
         transition: borderwidth 1s;
 }
