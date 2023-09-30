@@ -2,28 +2,34 @@
 <h3 style="text-align: center;">Click on a project to learn more!</h3>
 
 <div class="bg_img_portfolio">
-        <img id="background_img" src="Images/CoC/MainCapsule.PNG" style="border-radius: 10%; height: 100%; width: 100%;">
+        <img id="background_img" src="Images/CoC/MainCapsule.PNG" style="border-top-left-radius: 10%; border-top-right-radius: 10%; height: 100%; width: 100%;">
 </div>
 
-<div style="padding-bottom: 15%;">
-        <img src="Images/CoC/MainCapsule.PNG" alt="Title art" style="left: 0%;"
+<div style="padding-bottom: 0%;">
+        <img src="Images/CoC/MainCapsule.PNG" alt="Title art"
                 onmouseover="ChangeBackground('Images/CoC/MainCapsule.PNG')" onclick="SlidePanel($('#CoC'))" class="panel_img">
 
-        <img src="Images/Subtension/Subtension Title Art.png" alt="Title art" style="left: 20%;"
+        <img src="Images/Cellosseum/Logo.png" alt="Title art"
+                onmouseover="ChangeBackground('Images/Cellosseum/MainCapsule.png')" onclick="SlidePanel($('#Cellosseum'))" class="panel_img">
+
+        <img src="Images/Subtension/Subtension Title Art.png" alt="Title art"
                 onmouseover="ChangeBackground('Images/Subtension/Subtension Title Art.png')" onclick="SlidePanel($('#Subtension'))" class="panel_img">
 
-        <img src="Images/MVT/MVTtitle.png" alt="Title art" style="left: 40%;" 
+        <img src="Images/MVT/MVTtitle.png" alt="Title art"
                 onmouseover="ChangeBackground('Images/MVT/MVTtitle.png')" onclick="SlidePanel($('#MVT'))" class="panel_img">
 
-        <img src="Images/Overdeveloped/OverdevelopedTitle.png" alt="Title art" style="left: 60%;" 
+        <img src="Images/Overdeveloped/OverdevelopedTitle.png" alt="Title art"
                 onmouseover="ChangeBackground('Images/Overdeveloped/OverdevelopedTitle.png')" onclick="SlidePanel($('#Overdeveloped'))" class="panel_img">
         
-        <img src="Images/494-Metroid/494-Logo.png" alt="Title art" style="left: 80%;" 
+        <img src="Images/494-Metroid/494-Logo.png" alt="Title art"
                 onmouseover="ChangeBackground('Images/494-Metroid/MetroidBackground.png')" onclick="SlidePanel($('#Metroid'))" class="panel_img">
 </div>
 
+<hr>
+
 <div class="basic_text">
         <div id="CoC" class="active_panel">
+                <img src="Images/CoC/Title.png" class="title_portfolio">
                 <h3 style="text-align: center;">Curse of the Corsair</h3>
                 <p>
                         <i>Curse of the Corsair</i> is a 2D action-adventure game made as a case study of <i>Hyper Light Drifter</i> by Heart Machine. It was developed in <b>Unity and C#</b> during the 2023 winter semester by WolverineSoft Studio:
@@ -53,7 +59,36 @@
                 </div>
         </div>
 
+        <div id="Cellosseum" style="display: none;">
+                <img src="Images/Cellosseum/Title.png" class="title_portfolio">
+                <h3 style="text-align: center;">Cellosseum</h3>
+                <p>
+                        <i>Cellosseum</i> is a 2D action-roguelike game made as a case study of <i>Nova Drift</i> by Chimeric. It was developed in <b>Unity and C#</b> during the 2023 summer semester by WolverineSoft Studio:
+                        the student-led game development organization at the University of Michigan. I worked with a team of around ~35 other designers, artists, programmers, producers, marketers, and sound designers throughout this project.
+                        We utilized the <b>Agile design process</b>, along with tools such as <b>Jira, Confluence, and Bitbucket</b> to streamline our development process.
+                </p>
+                <p>
+                        <i>Cellosseum</i> was my first semester as the <b>design lead</b> for WolverineSoft Studio. As design lead, I hired my design team by conducting thorough interviews with many qualified candidates
+                        and taught them how to write thorough design documentation and upload it to our <b>Confluence</b> page. I also led design meetings, performed design reviews, assigned tasks, and facilitated communications with the other departments, 
+                        this allowed the project to maintain a cohesive creative vision and reasonable scope for all departments.
+                </p>
+                <p>
+                        I'm very proud of all of the work that WolverineSoft did on <i>Cellosseum</i>, I think that it wound up being one of our most complete and polished games ever! Throughout development, I learned how to direct the members of my team
+                        without taking away their ownership of their corner of the project, which led to less creative overhead and allowed designers to be more imaginative.
+                </p>
+                <p>
+                        Download the game on Steam <a href="https://store.steampowered.com/app/2557580/Cellosseum/" target="_blank">HERE</a>.
+                </p>
+                <div style="margin-bottom: 20%;">
+                        <img src="Images/Cellosseum/MainCapsule.png" alt="Main Character Art" style="left: 0%;" class="portfolio_img">
+                        <img src="Images/Cellosseum/Upgrade.png" alt="Customize your cell!" style="left: 25%;" class="portfolio_img">
+                        <img src="Images/Cellosseum/Story.png" alt="Meet crazy characters!" style="left: 50%;" class="portfolio_img">
+                        <img src="Images/Cellosseum/BossFight.png" alt="Fight for the future of your planet!" style="left: 75%;" class="portfolio_img">
+                </div>
+        </div>
+
         <div id="Subtension" style="display: none;">
+                <img src="Images/Subtension/Title.png" class="title_portfolio">
                 <h3 style="text-align: center;">Subtension</h3>
                 <p>
                         <i>Subtension</i> is a real-time strategy game made as a case study of <i>FTL:Faster Than Light</i> by Subset Games. It was developed in <b>Unity and C#</b> over the 2022 summer and fall semesters by WolverineSoft Studio:
