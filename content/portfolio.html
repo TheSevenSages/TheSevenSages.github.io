@@ -211,10 +211,11 @@
 
         // activates the correct panel
         function SlidePanel(panel){
-                $('.active_panel').css("display", "none");
-                $('.active_panel').removeClass("active_panel");
+                var oldPanel = $('.active_panel');
+                oldPanel.fadeToggle("fast");
+                oldPanel.removeClass("active_panel");
                 $(panel).addClass("active_panel");
-                $(panel).slideToggle("slow");
+                $(panel).fadeToggle("fast");
         }
 
         // // changes the image in the background
