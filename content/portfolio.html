@@ -29,6 +29,9 @@
 
         <img src="Images/BroadcastDay/Logo.png" alt="Title art"
                 onmouseover="ChangeBackground('Images/BroadcastDay/Background.png')" onclick="SlidePanel($('#BroadcastDay'))" class="panel_img">
+
+        <img src="Images/498-Game-Engine/498_banner.png" alt="Title art"
+                onmouseover="ChangeBackground('Images/498-Game-Engine/screensaver.png')" onclick="SlidePanel($('#GameEngine'))" class="panel_img">
 </div>
 
 <hr>
@@ -232,6 +235,26 @@
                         Play the game in browser, on its Itch.io page <a href="https://kapitha.itch.io/broadcast-day" target="_blank">HERE</a>.
                         <br>
                         You can also read our devlog <a href="https://www.indiedb.com/members/thesevensages/blogs" target="_blank">HERE</a>.
+                </p>
+        </div>
+
+        <div id="GameEngine" style="display: none;">
+                <h3 style="text-align: center;">Game Engine</h3>
+                <p>
+                        Skills Used: C++, Lua, Make, Box2D, LuaBridge, GLM, SDL 
+                </p>
+                <p>
+                        This is a game engine that I made over the course of a single semester in Winter 2024 as part of EECS 498: Game Engine Architecture at the University of Michigan.
+                        Its architecture is heavily based off of Unity, and it is written in C++. The scripting language is Lua, I used Luabridge to connect the Lua scripts written by developers to the C++ core.
+                        I linked the Box2D and SDL libraries to this engine to be used for physics and rendering respectively. This engine runs on Mac, Windows, and Linux.
+                </p>
+                <p>
+                        I also wrote my own custom particle system for the engine, it's also based off of Unity's particle system and has a huge number of options to choose from so developers can get the exact effect they envisioned in their heads!
+                </p>
+                <p>
+                        Download the engine for yourself <a href="https://github.com/TheSevenSages/mrjacob_game_engine" target="_blank">HERE</a>.
+                        <br>
+                        You can also see a demo for it <a href="https://youtu.be/3EWil9ZBgeo" target="_blank">HERE</a>.
                 </p>
         </div>
 </div>
