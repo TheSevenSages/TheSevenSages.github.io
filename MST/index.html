@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+    <header>        
+        <style>
+            /* 1. Reset default browser margins/paddings */
+            html, body {
+                margin: 0;
+                padding: 0;
+                overflow: hidden; /* Prevents scrollbars when filling the screen */
+                width: 100%;
+                height: 100%;
+            }
+            /* 2. Make the canvas container fill the entire body */
+            #canvas {
+                display: block; /* Removes any extra space beneath the canvas */
+                background-color: grey;
+                /* Set canvas display size to 100% of the viewport */
+                width: 100vw; /* 100% of viewport width */
+                height: 100vh; /* 100% of viewport height */
+            }
+        </style>
+
+        <h1 style="text-align: center;">Multiplayer Server Tests</h1>
+        <div>
+            <label>Color:</label>
+            <input id="ColorPicker" type="color">
+        </div>
+        <div>
+            <label>User ID:</label><label id="UserID"></label>
+        </div>
+        <button onclick="Disconnect()">disconnect</button>
+    </header>
+    <body>
+        <div style="height: 100%; width: 100%; position: absolute;">
+            <canvas id="canvas" style="position: relative; width: 100%; height: 100%; background-color: grey;"></canvas>
+        </div>
+        <script>
+            const api_url = "http://3.143.211.102:8080/api/player";
+    
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext("2d");
+    
+            let all_players = []
+    
+            let myself = {
+                id: -1,
+                x: 0,
+                y: 0,
+                color: "red"
+            };
+    
+            window.onload = async () => {
+                resizeCanvas();
+                myself.id = await GetSessionPlayerCount();
+                document.getElementById('UserID').innerHTML = myself.id;
+                PostNewPlayer(myself);
+            };
+    
+            async function Disconnect() {
+                await DeletePlayer(myself.id);
+                window.close();
+            };
+    
+            window.addEventListener('keydown', (event) => {
+                if (event.key == 'w') { myself.y -=1; }
+                if (event.key == 'd') { myself.x += 1; }
+                if (event.key == 's') { myself.y += 1; }
+                if (event.key == 'a') { myself.x -=1; }
+    
+                UpdatePlayer(myself.id, myself);
+            });
+    
+            document.getElementById('ColorPicker').addEventListener('change', function (event) {
+                myself.color = event.target.value;
+                UpdatePlayer(myself.id, myself);
+            });
+    
+            window.requestAnimationFrame(main);
+            function main() {
+                GetAllPlayers();
+    
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                // ctx.setscale(2,2);
+    
+                for (i = 0; i < all_players.length; i++)
+                {
+                    // Draw Circle
+                    player = all_players[i];
+                    ctx.beginPath();
+                    ctx.ellipse(player.x, player.y, 10, 10, 0, 0, 2 * Math.PI);
+                    ctx.fillStyle = player.color;
+                    ctx.fill();
+                    ctx.stroke();
+
+                    // Draw ID
+                    // --- 1. Set Styles for Filled Text ---
+                    ctx.fillStyle = 'Black';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(player.id, player.x, player.y);
+                }
+                // ctx.setscale(0.5,0.5);
+                window.requestAnimationFrame(main);
+            }
+
+            // Function to resize canvas drawing buffer and calculate scale
+            function resizeCanvas() {
+                // Set the internal canvas drawing buffer size to match the CSS size
+                // canvas.clientWidth/Height gives the actual pixel size the element is displayed at.
+                canvas.width = canvas.clientWidth;
+                canvas.height = canvas.clientHeight;
+            }
+            // Call the resize function once on load and add a listener for future resizing
+            window.addEventListener('resize', resizeCanvas);
+
+            async function GetSessionPlayerCount() 
+            {
+                try 
+                {
+                    const url = api_url + '/sessionplayers';
+                    console.log(url);
+                    const response = await fetch(url);
+    
+                    if (!response.ok) { throw new Error('HTTP error! status ' + response.status); }
+    
+                    s = await response.json();
+                    return s;
+                }
+                catch (error)
+                {
+                    console.error('Error fetching player count:', error);
+                }                                
+            }
+    
+            async function GetAllPlayers() 
+            {
+                try 
+                {
+                    const response = await fetch(api_url);
+    
+                    if (!response.ok) { throw new Error('HTTP error! status ' + response.status); }
+    
+                    const players = await response.json();
+                    
+                    all_players = players;
+                }
+                catch (error)
+                {
+                    console.error('Error fetching players:', error);
+                }
+            }
+    
+            async function PostNewPlayer(newPlayer)
+            {
+                try 
+                {
+                    const response = await fetch(api_url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(newPlayer)
+                    });
+    
+                    if (!response.ok) { throw new Error('HTTP error! status ' + response.status); }
+    
+                    const result = await response.json();
+                    console.log('Player added', result);
+                }
+                catch (error)
+                {
+                    console.error('Error posting a player:', error);
+                }
+            }
+    
+            async function UpdatePlayer(id, updatedPlayer)
+            {
+                try 
+                {
+                    const response = await fetch(api_url + '/' + id, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(updatedPlayer)
+                    });
+    
+                    if (!response.ok) { throw new Error('HTTP error! status ' + response.status); }
+                }
+                catch (error)
+                {
+                    console.error('Error updating a player:', error);
+                }
+            }
+    
+            async function DeletePlayer(id)
+            {
+                try 
+                {
+                    const response = await fetch(api_url + '/' + id, {
+                        method: 'DELETE'
+                    });
+    
+                    if (!response.ok) { throw new Error('HTTP error! status ' + response.status); }
+                }
+                catch (error)
+                {
+                    console.error('Error deleting a player:', error);
+                }
+            }
+        </script>     
+    </body>
+</html>
