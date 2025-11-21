@@ -1,3 +1,6 @@
+<!-- TO DELETE WHEN PAGE IS DONE -->
+<script type="text/javascript" src="../js/jquery-3.6.4.min.js"></script>
+<link rel = "stylesheet" href = "../css/style.css">
 <!-- Needed to use the "md-block" HTML item -->
 <script type="module" src="https://md-block.verou.me/md-block.js"></script>
 
@@ -32,7 +35,7 @@
             contents.forEach(element => {
                 let li = document.createElement('li')
                 const name = element.name
-                li.style='cursor: pointer'
+                li.classList.add("portfolio_link")
                 li.innerText = name
 
                 if (element.type == 'dir'){
