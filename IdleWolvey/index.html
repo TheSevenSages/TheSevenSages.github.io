@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html style="overflow: hidden; margin: 0%; padding: 0%;">
+<head>    
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+        }
+        #canvas-wrapper {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body style="overflow: hidden; margin: 0%; padding: 0%;">
+    <div id="canvas-container" style="margin: 0%; padding: 0%; width: 100vw; height: 100vh;">
+        <canvas id="c" width="800" height="600" style="display: block; margin: 0%; padding: 0%;"></canvas>
+    </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+<script src="particles.js"></script>
+<script src="logic.js"></script>
+<script src="styling.js"></script>
+<script>
+    myAudio = new Audio('bgm.mp3');
+    myAudio.addEventListener('ended', function() {
+        this.currentTime = 0;
+        this.play();
+    }, false);
+    myAudio.play()
+    const canvas = new fabric.Canvas('c', {
+        selection: false, // Disable the blue group selection box globally
+        hoverCursor: 'default',
+        backgroundColor: '#26285D'
+    });
+
+    // UI Constants
+    const COLORS = {
+        leftBg: '#1a232e', // Dark Blue
+        midBg: '#0d1218',  // Darker Blue/Black
+        rightBg: '#F6CF47',
+        text: '#26285D',
+        accent: '#66cdaa',
+        storeHover: '#f8da6d',
+        storeBg: '#F6CF47',
+        storeClick: '#dbae0a',
+        upgradeBg: '#424eb9',
+        upgradeHover: '#6F76B4'
+    };
+
+    /**
+     * Preloads a list of images so they are cached and ready to use.
+     * @param {string[]} urls - An array of image strings/URLs.
+     */
+    // --- 1. PRELOADER UTILITY (UPDATED) ---
+    function preloadAssets(assetsToLoad) {
+        // We map over the Keys now, not just a list of URLs
+        const promises = Object.keys(assetsToLoad).map(key => {
+            const url = assetsToLoad[key];
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.src = url;
+                // We pass back the KEY so we know which image this is
+                img.onload = () => resolve({ key: key, success: true, element: img });
+                img.onerror = () => {
+                    console.warn(`Failed to load asset '${key}': ${url}`);
+                    resolve({ key: key, success: false, element: null });
+                };
+            });
+        });
+
+        return Promise.all(promises).then(results => {
+            const loadedAssets = {};
+            results.forEach(item => {
+                if (item.success) {
+                    // Reconstruct the object: { cookieIcon: <img element> }
+                    loadedAssets[item.key] = item.element;
+                }
+            });
+            assets["images"] = loadedAssets;
+        });
+    }
+
+    // --- OBJECT CREATION ---
+
+    // 1. Background Panels (Visual separation)
+    const panelMid = new fabric.Rect({ left: 0, top: 0, fill: COLORS.midBg, selectable: false, evented: false });
+    const panelRight = new fabric.Rect({ left: 0, top: 0, fill: COLORS.rightBg, opacity: 0.8, selectable: false, evented: false });
+    // Divider lines
+    const div2 = new fabric.Rect({ top: 0, width: 6, fill: 'rgba(0,0,0,0.5)', selectable: false, evented: false });
+
+    canvas.add(panelRight, div2);
+
+    // 2. Score Text
+    const scoreLabel = new fabric.Text('0 MDP Credits', {
+        fontFamily: 'Comic Sans MS, Arial, sans-serif',
+        fontSize: 40,
+        fill: '#ffffff',
+        textAlign: 'center',
+        selectable: false,
+        evented: false,
+        shadow: new fabric.Shadow({ color: 'rgba(0,0,0,0.5)', blur: 10, offsetX: 2, offsetY: 2 })
+    });
+    const cpsLabel = new fabric.Text('per second: 0', {
+        fontFamily: 'Arial, sans-serif',
+        fontSize: 18,
+        fill: '#aaaaaa',
+        textAlign: 'center',
+        selectable: false,
+        evented: false
+    });
+    canvas.add(scoreLabel, cpsLabel);
+
+    // 3. Store Title
+    const storeTitle = new fabric.Text('STORE', {
+        fontFamily: 'Comic Sans MS, Arial, sans-serif',
+        fontSize: 24,
+        fontWeight: 'bold',
+        fill: COLORS.text,
+        selectable: false,
+        evented: false
+    });
+    canvas.add(storeTitle);
+
+
+    // 4. Helper to create a Store Item Button
+    function createStoreItem(name, price, creditsPerSecond, iconImg, flavorTxt, audio, index) {
+        itemTracker[index].cost = price
+        itemTracker[index].creditsPerSecond = creditsPerSecond
+        itemTracker[index].name = name
+        itemTracker[index].image = iconImg
+        itemTracker[index].audio = audio
+
+        const height = 100;
+        const padding = 10;
+        
+        // Container Box
+        const bg = new fabric.Rect({
+            width: 280, // Will be resized in layout
+            height: height - padding,
+            fill: COLORS.storeBg,
+            rx: 5, ry: 5,
+            stroke: '#333',
+            strokeWidth: 1
+        });
+
+        // Locked
+        const locked = new fabric.Rect({
+            width: 280, // Will be resized in layout
+            height: height - padding,
+            fill: '#444',
+            opacity: 0.5,
+            rx: 5, ry: 5,
+            stroke: '#333',
+            strokeWidth: 1,
+            evented: false
+        });
+
+        const icon = new fabric.Image(iconImg, {
+            crossOrigin: "anonymous",
+            left: 10,
+            top: 10,
+            scaleX: 0.2,
+            scaleY: 0.2
+        });
+        normalizeImageScale(icon, 60, 60)
+
+        // Name
+        const nameText = new fabric.Text(name, {
+            fontFamily: 'Arial',
+            fontSize: 20,
+            fill: COLORS.text,
+            left: 70,
+            top: 10,
+            fontWeight: 'bold'
+        });
+
+        // Price
+        const priceText = new fabric.Text(`MDP: ${NumberFormatter(price)}`, {
+            fontFamily: 'Arial',
+            fontSize: 16,
+            fill: COLORS.text,
+            left: 70,
+            top: 35
+        });
+
+        // Flavor
+        const flavorText = new fabric.Text(`\"${flavorTxt}\"`, {
+            fontFamily: 'Arial',
+            fontSize: 12,
+            fontStyle: "italic",
+            fill: COLORS.text,
+            left: 10,
+            top: 70
+        });
+
+        // Count
+        const countText = new fabric.Text(`x0`, {
+            fontFamily: 'Arial',
+            fontSize: 35,
+            fontStyle: "bold",
+            fill: COLORS.text,
+            left: 160,
+            top: 20
+        });
+
+        // per second
+        const cpsText = new fabric.Text(`${NumberFormatter(creditsPerSecond)}/s`, {
+            fontFamily: 'Arial',
+            fontSize: 12,
+            fontStyle: "bold",
+            fill: COLORS.text,
+            left: 0,
+            top: 0
+        });
+
+        // Upgrade button
+        const upgradeButton = createUpgradeButton(index, cpsText)
+
+        // Group them
+        const group = new fabric.Group([bg, icon, nameText, priceText, flavorText, countText, cpsText, upgradeButton, locked], {
+            left: 0, // Set in layout
+            top: 0,  // Set in layout
+            selectable: false, // LOCKED: User can't move the button
+            hoverCursor: 'pointer',
+            subTargetCheck: true,
+            name: 'storeButton'
+        });
+
+        // Custom properties for logic
+        group.origFill = COLORS.storeBg;
+        
+        let buyable = false;
+        // Add interaction
+        group.on('mouseover', (opt) => {
+            if (!buyable || (opt.subTargets && opt.subTargets.includes(upgradeButton))) {
+                return; // STOP HERE. Do not run the code below.
+            }
+            bg.set('fill', COLORS.storeHover);
+            canvas.requestRenderAll();
+        });
+        group.on('mouseout', () => {
+            bg.set('fill', COLORS.storeBg);
+            canvas.requestRenderAll();
+        });
+        group.on('mousedown', (opt) => {
+            if (!buyable || (opt.subTargets && opt.subTargets.includes(upgradeButton))) {
+                return; // STOP HERE. Do not run the code below.
+            }
+            bg.set('fill', COLORS.storeClick);
+            canvas.requestRenderAll();
+        });
+        group.on('mouseup', (opt) => {
+            if (!buyable || (opt.subTargets && opt.subTargets.includes(upgradeButton))) {
+                return; // STOP HERE. Do not run the code below.
+            }
+            mdpCount -= itemTracker[index].cost
+
+            bg.set('fill', COLORS.storeHover);
+            // increase count
+            countText.set('text', `x${NumberFormatter(++itemTracker[index].count)}`)
+            // increase cost
+            itemTracker[index].cost = Math.ceil(itemTracker[index].cost * 1.15)
+            priceText.set('text', `MDP: ${NumberFormatter(itemTracker[index].cost)}`)
+            canvas.requestRenderAll();
+        });
+        group.on('tolmet', function() {
+            countText.set('text', `x${NumberFormatter(itemTracker[index].count)}`)
+            canvas.requestRenderAll();
+        });
+
+        function up(){
+            if (mdpCount >= itemTracker[index].cost){
+                locked.set('opacity', 0.0)
+                buyable = true
+            }
+            else
+            {
+                locked.set('opacity', 0.5)
+                buyable = false
+            }
+            fabric.util.requestAnimFrame(up)
+            canvas.requestRenderAll();
+        }
+        fabric.util.requestAnimFrame(up);
+
+        assets.storeItems.push(group);
+        canvas.add(group);
+    }
+
+    function createUpgradeButton(itemIndex, cpstext) {
+        // Container Box
+        const bg = new fabric.Rect({
+            width: 50, // Will be resized in layout
+            height: 75,
+            fill: COLORS.upgradeBg,
+            rx: 5, ry: 5,
+            stroke: '#333',
+            strokeWidth: 1
+        });
+
+        // Locked
+        const locked = new fabric.Rect({
+            width: 50, // Will be resized in layout
+            height: 75,
+            fill: '#444',
+            opacity: 0.5,
+            rx: 5, ry: 5,
+            stroke: '#333',
+            strokeWidth: 1,
+            evented: false
+        });
+
+        // level
+        const level = new fabric.Text(`LEVEL\n${NumberFormatter(itemTracker[itemIndex].level)}`, {
+            fontFamily: 'Arial',
+            fontSize: 12,
+            textAlign: "center",
+            fill: '#fff',
+            left: 5,
+            top: 5
+        });
+
+        // Upgrade Cost
+        const upgradeCost = new fabric.Text(`${NumberFormatter(CalculateUpgradeCost(itemIndex))}`, {
+            fontFamily: 'Arial',
+            fontSize: 12,
+            textAlign: "center",
+            fill: '#fff',
+            left: 0,
+            top: 40
+        });
+
+        // Group them
+        const group = new fabric.Group([bg, level, upgradeCost, locked], {
+            left: 225, // Set in layout
+            top: 7.5,  // Set in layout
+            selectable: false, // LOCKED: User can't move the button
+            hoverCursor: 'pointer',
+            subTargetCheck: false,
+            name: 'upgradeButton'
+        });
+
+        let buyable = false;
+         // Add interaction
+        group.on('mouseover', () => {
+            bg.set('fill', COLORS.upgradeHover);
+            canvas.requestRenderAll();
+        });
+        group.on('mouseout', () => {
+            bg.set('fill', COLORS.upgradeBg);
+            canvas.requestRenderAll();
+        });
+        group.on('mousedown', () => {
+            bg.set('fill', '#e69595');
+            canvas.requestRenderAll();
+        });
+        group.on('mouseup', () => {
+            bg.set('fill', COLORS.upgradeHover);
+            if (!buyable) {return}
+
+            itemTracker[itemIndex].creditsPerSecond *= 2
+            cpstext.set('text', `${NumberFormatter(itemTracker[itemIndex].creditsPerSecond)}/s`)
+
+            mdpCount -= CalculateUpgradeCost(itemIndex)
+
+            level.set('text', `LEVEL\n${NumberFormatter(++itemTracker[itemIndex].level)}`)
+            upgradeCost.set('text', `${NumberFormatter(CalculateUpgradeCost(itemIndex))}`)
+            canvas.requestRenderAll();
+        });
+
+        function up(){
+            if (mdpCount >= CalculateUpgradeCost(itemIndex)){
+                locked.set('opacity', 0.0)
+                buyable = true
+            }
+            else
+            {
+                locked.set('opacity', 0.5)
+                buyable = false
+            }
+            fabric.util.requestAnimFrame(up)
+            canvas.requestRenderAll();
+        }
+        fabric.util.requestAnimFrame(up);
+
+        return group
+    }
+
+    function createPowerUp(name, price, description, iconImg, level, onpurchase) {
+        const height = 100;
+        const padding = 10;
+        const index = assets.powerUps.length
+        
+        // Container Box
+        const bg = new fabric.Rect({
+            width: 100, // Will be resized in layout
+            height: height - padding,
+            fill: COLORS.storeBg,
+            rx: 5, ry: 5,
+            stroke: '#333',
+            strokeWidth: 1
+        });
+
+        // Locked
+        const locked = new fabric.Rect({
+            width: 100, // Will be resized in layout
+            height: height - padding,
+            fill: '#444',
+            opacity: 0.5,
+            rx: 5, ry: 5,
+            stroke: '#333',
+            strokeWidth: 1,
+            evented: false
+        });
+
+        const icon = new fabric.Image(iconImg, {
+            crossOrigin: "anonymous",
+            left: 10,
+            top: 5,
+            originX: "left"
+        });
+        normalizeImageScale(icon, 80, 65)
+
+        const outofstock = new fabric.Image(assets.images['outofstock'], {
+            crossOrigin: "anonymous",
+            left: 10,
+            top: 5,
+            originX: "left",
+            opacity: 0.0
+        });
+        normalizeImageScale(outofstock, 80, 65)
+
+        // Price
+        const priceText = new fabric.Text(`${NumberFormatter(price)}`, {
+            fontFamily: 'Arial',
+            fontSize: 16,
+            fill: COLORS.text,
+            left: 5,
+            top: 70
+        });
+
+        // Flavor
+        const flavorText = new fabric.Text(`${description}`, {
+            fontFamily: 'Arial',
+            fontSize: 8,
+            fontStyle: "italic",
+            fill: COLORS.text,
+            left: 37,
+            top: 75
+        });
+
+        // Group them
+        const group = new fabric.Group([bg, icon, priceText, flavorText, locked, outofstock], {
+            left: 0, // Set in layout
+            top: 0,  // Set in layout
+            selectable: false, // LOCKED: User can't move the button
+            hoverCursor: 'pointer',
+            subTargetCheck: true,
+            name: 'powerUpButton'
+        });
+
+        let buyable = false;
+        let purchased = false;
+        // Add interaction
+        group.on('mouseover', (opt) => {
+            bg.set('fill', COLORS.storeHover);
+            canvas.requestRenderAll();
+        });
+        group.on('mouseout', () => {
+            bg.set('fill', COLORS.storeBg);
+            canvas.requestRenderAll();
+        });
+        group.on('mousedown', (opt) => {
+            bg.set('fill', COLORS.storeClick);
+            canvas.requestRenderAll();
+        });
+        group.on('mouseup', (opt) => {
+            bg.set('fill', COLORS.storeHover);
+            if (!buyable) {return}
+            onpurchase(level)
+            purchased = true
+            mdpCount -= price
+            canvas.requestRenderAll();
+        });
+
+        function up(){
+            if (mdpCount >= price){
+                locked.set('opacity', 0.0)
+                buyable = true
+            }
+            else
+            {
+                locked.set('opacity', 0.5)
+                buyable = false
+            }
+            if (!purchased)
+            {
+                fabric.util.requestAnimFrame(up)
+            }
+            else {
+                locked.set('opacity', 0.75)
+                outofstock.set('opacity', 1)
+            }
+            canvas.requestRenderAll();
+        }
+        fabric.util.requestAnimFrame(up);
+
+        assets.powerUps.push(group)
+        canvas.add(group)
+    }
+
+    // --- LOAD MAIN ASSET ---
+
+    // Using the generated image ID or a placeholder
+    function setupMainClicker(clickerImg) {
+        let fabricObj = new fabric.Image(clickerImg, {
+            crossOrigin: "anonymous"
+        })
+        assets.wolvey = fabricObj;
+
+        fabricObj.set({
+            originX: 'center',
+            originY: 'center',
+            // === CRITICAL FIX: Ensure the object is enabled for mouse events ===
+            evented: true,       
+            selectable: false,
+            hoverCursor: 'pointer',
+            hasControls: false,
+            lockMovementX: true,
+            lockMovementY: true
+        });
+
+        // Click Interaction
+        fabricObj.on('mousedown', function() {
+            // Animate Shrink
+            fabricObj.animate('scaleX', fabricObj.scaleX * 0.9, { duration: 50, onChange: canvas.renderAll.bind(canvas) });
+            fabricObj.animate('scaleY', fabricObj.scaleY * 0.9, { duration: 50, onChange: canvas.renderAll.bind(canvas) });
+        });
+
+        fabricObj.on('mouseup', function() {
+            // Calculate correct return scale based on layout rules
+            const w = canvas.width;
+            const h = canvas.height;
+            const leftW = w * 0.30;
+            
+            // Calculate the target size based on current layout
+            const targetSize = Math.min(leftW, h) * 0.6;
+            const objWidth = fabricObj.type === 'circle' ? fabricObj.radius * 2 : fabricObj.width; 
+            const targetScale = targetSize / objWidth; 
+
+            // Animate Back
+            fabricObj.animate('scaleX', targetScale, { duration: 100, easing: fabric.util.ease.easeOutBounce, onChange: canvas.renderAll.bind(canvas) });
+            fabricObj.animate('scaleY', targetScale, { duration: 100, easing: fabric.util.ease.easeOutBounce, onChange: canvas.renderAll.bind(canvas) });
+
+            // Score Logic
+            let before = mdpCount;
+            click()
+            scoreLabel.set('text', `${NumberFormatter(mdpCount)} Credits`);
+            
+            // Spawn Floater
+            spawnFloater(`+${NumberFormatter(mdpCount - before)}`, fabricObj.left, fabricObj.top);
+        });
+
+        fabricObj.on('mouseout', () => {
+             // Calculate correct return scale based on layout rules
+            const w = canvas.width;
+            const h = canvas.height;
+            const leftW = w * 0.30;
+            
+            // Calculate the target size based on current layout
+            const targetSize = Math.min(leftW, h) * 0.6;
+            const objWidth = fabricObj.type === 'circle' ? fabricObj.radius * 2 : fabricObj.width; 
+            const targetScale = targetSize / objWidth; 
+
+            // Animate Back
+            fabricObj.animate('scaleX', targetScale, { duration: 100, easing: fabric.util.ease.easeOutBounce, onChange: canvas.renderAll.bind(canvas) });
+            fabricObj.animate('scaleY', targetScale, { duration: 100, easing: fabric.util.ease.easeOutBounce, onChange: canvas.renderAll.bind(canvas) });
+        });
+
+        canvas.add(assets.wolvey);
+        renderLayout();
+    }
+
+    // --- UTILITIES ---
+
+    // Floating text effect
+    function spawnFloater(text, x, y) {
+        const floater = new fabric.Text(text, {
+            left: x, top: y - 50,
+            fontFamily: 'Arial', fontSize: 24, fontWeight: 'bold', fill: '#fff',
+            originX: 'center', originY: 'center',
+            selectable: false, evented: false
+        });
+        canvas.add(floater);
+        floater.animate('top', y - 150, { duration: 1000, onChange: canvas.renderAll.bind(canvas) });
+        floater.animate('opacity', 0, { 
+            duration: 1000, 
+            onChange: canvas.renderAll.bind(canvas),
+            onComplete: () => canvas.remove(floater)
+        });
+    }
+
+    // --- RESPONSIVE LAYOUT ENGINE ---
+// --- RESPONSIVE LAYOUT ENGINE ---
+    
+    function renderLayout() {
+        // 1. Get Dimensions
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        
+        // Resize Canvas
+        canvas.setWidth(w);
+        canvas.setHeight(h);
+
+        // 2. Define Columns
+        const leftW = w * 0.30;
+        const midW = w * 0.40; 
+        const rightW = w * 0.30;
+        
+        // 3. Position Backgrounds
+        panelMid.set({ width: midW + leftW, height: h });
+        panelRight.set({ left: leftW + midW, width: rightW, height: h });
+        div2.set({ left: leftW + midW, height: h });
+
+        // --- A. TEMPORARY LAYOUT PASS (Calculate Required Height at Scale 1) ---
+        
+        let requiredY = 60; // Start below the store title (Title is at 20, 40px height approx)
+        const itemSpacing = 10;
+        
+        // 1. Store Items (Scale 1 estimation)
+        assets.storeItems.forEach((item) => {
+            const itemHeight = item.height; // Use raw height for required space calculation
+            requiredY += itemHeight + itemSpacing;
+        });
+        
+        // 2. Power Ups (Scale 1 estimation in 2 columns)
+        let maxPowerUpRowHeight = 0;
+        let powerUpRows = Math.ceil(assets.powerUps.length / 2);
+        
+        // Use the height of the first power up item (assuming all are the same)
+        if (assets.powerUps.length > 0) {
+            maxPowerUpRowHeight = assets.powerUps[0].height; // Height at scale 1
+            // Total height needed for power-up rows
+            requiredY += (powerUpRows * maxPowerUpRowHeight) + ((powerUpRows - 1) * itemSpacing);
+        }
+        
+        // Total height of ALL content starting from Y=60
+        const totalContentHeight = requiredY - 60; 
+        
+        // Available vertical space in the right panel (below title, 10px bottom margin)
+        const availableHeight = h - 60 - 10; 
+        
+        // Calculate the necessary vertical scale factor (This must be applied uniformly to prevent stretching)
+        const scaleFactor = Math.min(1, availableHeight / totalContentHeight); 
+
+        // 4. Position Cookie (Center of Left/Mid Panel)
+        if(assets.wolvey) {
+            const wolveySize = Math.min(leftW, h) * 0.6;
+            const objWidth = assets.wolvey.width;
+            const scale = wolveySize / objWidth;
+            assets.wolvey.set({
+                left: (leftW + midW) / 2,
+                top: h / 2,
+                scaleX: scale,
+                scaleY: scale
+            });
+            assets.wolvey.setCoords()
+        }
+
+        if (assets.bgBars) {
+            assets.bgBars.set({
+                    left: (leftW + midW) / 2,
+                    top: h / 2
+            });
+            canvas.sendToBack(assets.bgBars);
+        }
+
+        // 5. Position Score (Above Cookie)
+        scoreLabel.set({
+            left: (leftW + midW) / 2,
+            originX: 'center',
+            top: h * 0.15
+        });
+        cpsLabel.set({
+            left: (leftW + midW) / 2,
+            originX: 'center',
+            top: h * 0.15 + 50
+        });
+        canvas.bringToFront(cpsLabel)
+        canvas.bringToFront(scoreLabel)
+
+        // 6. Position Store Title (Right Panel Top)
+        storeTitle.set({
+            left: (leftW + midW) + (rightW / 2),
+            originX: 'center',
+            top: 20
+        });
+
+        // --- B. FINAL LAYOUT PASS (Apply Uniform Scale and Position) ---
+        
+        let currentY = 60; // Start below the store title
+        const rightPanelCenter = (leftW + midW) + (rightW / 2);
+        
+        // 1. Position Store Items (Top Section)
+        assets.storeItems.forEach((item) => {
+            
+            // Apply UNIFORM calculated scale to prevent stretching
+            item.scaleX = scaleFactor;
+            item.scaleY = scaleFactor;
+            
+            const scaledHeight = item.height * scaleFactor;
+            
+            item.set({
+                visible: true,
+                left: rightPanelCenter,
+                top: currentY,
+                originX: 'center',
+                originY: 'top'
+            });
+            item.setCoords()
+
+            // Increment Y for the next item
+            currentY += scaledHeight + (itemSpacing * scaleFactor);
+        });
+
+        // 2. Position Power Ups (Immediately Below Store Items, 2 Columns)
+        if (assets.powerUps.length > 0) {
+            let itemCounter = 0;
+            let currentPowerUpRowY = currentY; // Start right after the last store item
+            
+            // Use the scaled height and spacing based on the uniform scale factor
+            const powerUpRowHeight = maxPowerUpRowHeight * scaleFactor; 
+            const powerUpRowSpacing = itemSpacing * scaleFactor;
+            
+            // Column Center Points
+            const col1X = (leftW + midW) + (rightW / 4); // Center of Left Column
+            const col2X = (leftW + midW) + (rightW / 4) * 3; // Center of Right Column
+
+            assets.powerUps.forEach((item) => {
+                
+                // Apply UNIFORM calculated scale to prevent stretching
+                item.scaleX = scaleFactor; 
+                item.scaleY = scaleFactor; 
+                
+                const colIndex = itemCounter % 2; 
+                const rowIndex = Math.floor(itemCounter / 2); 
+                
+                // X position: Center of Left Column (col1X) or Center of Right Column (col2X)
+                const finalX = colIndex === 0 ? col1X : col2X;
+                
+                // Final Y position: Start point + (row index * (row height + spacing))
+                let finalY = currentPowerUpRowY + (rowIndex * (powerUpRowHeight + powerUpRowSpacing));
+
+                item.set({
+                    visible: true,
+                    left: finalX, 
+                    top: finalY,
+                    originX: 'center',
+                    originY: 'top'
+                });
+                item.setCoords()
+                
+                itemCounter++;
+            });
+        }
+        
+        canvas.requestRenderAll();
+    }
+    
+    preloadAssets(assetUrls).then(loadedAssets => {
+        console.log("All assets finished loading!", loadedAssets);
+
+        // Main Clicker
+        setupMainClicker(assets.images["wolvey"]);
+
+        // Create some store items
+        createStoreItem("ROOTS", 15, 0.1, assets.images["meme1"], "I have become ROOTS Eternal", 'root.wav', 0);
+        createStoreItem("BOOZE", 100, 1, assets.images["meme2"], "We thank you for your habitual drinking!", 'drink.mp3', 1);
+        createStoreItem("AMAN GUS", 1100, 8, assets.images["meme3"], "Sussy baka!", 'amog.mp3', 2);
+        createStoreItem("AMEN BREAK", 12000, 47, assets.images["meme4"], "Awoman break", 'break.mp3', 3);
+        createStoreItem("JOB...", 130000, 260, assets.images["meme5"], "There was a man in the land of Uz...", 'job.mp3', 4);
+
+        // Create power ups
+        for (i = 1; i < 4; i++)
+        {
+            createPowerUp(`Swolvey lv${i}`, Math.pow(50, i), "Powers up clicks", assets.images["swolvey"], i, (num) => {
+                console.log('SWOLVEY BOUGHT!')
+                creditsPerClick = Math.pow(5, num)
+            })
+            createPowerUp(`IGDA lv${i}`, Math.pow(50, i), "Yarger likes that :)", assets.images["igda"], i, (num) => {
+                console.log('IGDA BOUGHT!')
+                igdaVisits += num
+            })
+        }
+
+        assets.bgBars = createSpinningBars()
+        startEventTimers()
+        renderLayout();
+    })
+    // Listen to resize
+    window.addEventListener('resize', renderLayout);
+
+    let lastTimeStamp = -1
+    let lastCreditCount = 0
+    function Update(timestamp)
+    {
+        // Update score label
+        scoreLabel.set('text', `${NumberFormatter(Math.floor(mdpCount))} MDP Credits`);
+
+        // Update credits per second label
+        if (lastTimeStamp != -1)
+        {
+            if (timestamp - lastTimeStamp > 250)
+            {
+                const deltaTimeSeconds = 1000 / (timestamp - lastTimeStamp)
+                const totalCreditsPerSecond = (mdpCount - lastCreditCount) * deltaTimeSeconds;
+                cpsLabel.set('text', `per second: ${NumberFormatter(Math.floor(totalCreditsPerSecond))}`);
+
+                lastTimeStamp = timestamp
+                lastCreditCount = mdpCount
+            }
+        }
+        else
+        {
+            lastTimeStamp = timestamp
+            lastCreditCount = mdpCount
+        }
+        canvas.requestRenderAll();
+        window.requestAnimationFrame(Update)
+    }
+    window.requestAnimationFrame(Update)
+</script>
+</html>
