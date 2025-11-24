@@ -32,12 +32,17 @@
 .menu_link:hover {
         font-weight: 800;
 }
-.portfolio_link {
+.link,.portfolio_link {
         color: black;
         text-decoration-line: underline;
-        text-align: center;
         font-family: Georgia, 'Times New Roman', Times, serif;
         cursor: pointer;
+}
+.link:hover,.portfolio_link:hover {
+        font-weight: 800;
+}
+.portfolio_link  {
+        text-align: center;
 }
 .portfolio_link:hover {
         font-weight: 800;

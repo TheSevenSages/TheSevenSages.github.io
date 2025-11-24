@@ -7,19 +7,84 @@
 <h1 style="text-align: center;">Blogs</h1>
 
 <div>
-    <ul id="file_list"></ul>
+    <button id="back">BACK</button>
+    <ul id="file_list" style="list-style-type: none;"></ul>
 </div>
 <md-block id="file_display" src="https://raw.githubusercontent.com/TheSevenSages/SageXR/refs/heads/main/DEVLOG/November%202025/11-19.md"></md-block>
 
 
 <script>
+
+    const blogs = [
+        {
+            name: 'SageXR',
+            pathToBlog: "DEVLOG",
+            tree: null,
+            displayBlog: async function(){
+                const self = blogs[0] // IMPORTANT: Update this for the index of each blog
+                
+                // Load blog tree
+                if (!self.tree)
+                {
+                    self.tree = await GetGitHubTree("TheSevenSages", self.name, self.pathToBlog)
+                    console.log(self.tree)
+                }
+                else { console.log(self.name + ' tree already loaded!')}
+
+                DisplayDirectory(self.tree, "", 0)
+                // DisplayGitHubBlog("TheSevenSages", "SageXR", "DEVLOG", 0)
+            }
+        }
+    ]
+
     const file_list = document.getElementById("file_list")
     const file_display = document.getElementById("file_display")
 
-    DisplayContents("TheSevenSages", "SageXR", "DEVLOG")
+    ViewBlogs()
+
+    // Returns the tree of the repo relative to the given subdirectory
+    async function GetGitHubTree(owner, repo, subdir){
+        const url = `https://api.github.com/repos/${owner}/${repo}/git/trees/main?recursive=1`
+
+        try
+        {
+            const response = await fetch(url)
+            if (!response.ok) { throw new Error('HTTP error! status ' + response.status) }
+
+            const content = await response.json()
+
+            // If no subdir is specified return the whole tree
+            if (subdir == "") { return content.tree } 
+
+            // Sanitize the subdir path (this prevents us from accidentally including files with the same name as the final node in our subdir)
+            let prefix = subdir.endsWith('/') ? subdir : subdir + '/';
+            // Remove all of the nodes that don't start with our subdirectory path
+            const filteredTree = content.tree.filter(item => item.path.startsWith(prefix))
+
+            // Remove the prefix from all of our paths to make them relative to the subdir
+            // Also format the tree in a more generic way
+            const formattedTree = () => {
+                let _array= []
+                filteredTree.forEach(element => {
+                    _array.push({
+                        path: element.path.substring(prefix.length),
+                        type: element.type == "tree" ? "dir" : "file"
+                    })
+                });
+                return _array
+            }
+
+            return formattedTree()
+        }
+        catch (error)
+        {
+            console.error(`Error fetching content from ${url}:`, error)
+        }
+    }
 
     // Gets all of the folders from the given GitHub repo
-    async function DisplayContents(owner, repo, path){
+    // Depth tracks how far deep we are to ensure we can never go back farther up than when we started
+    async function DisplayGitHubBlog(owner, repo, path, depth){
         const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`
 
         try
@@ -28,20 +93,20 @@
             if (!response.ok) { throw new Error('HTTP error! status ' + response.status) }
 
             const contents = await response.json()
-            console.log(contents)
+
             // Clear the existing list
             file_list.innerHTML = ''
 
             contents.forEach(element => {
                 let li = document.createElement('li')
                 const name = element.name
-                li.classList.add("portfolio_link")
+                li.classList.add("link")
                 li.innerText = name
 
                 if (element.type == 'dir'){
                     // When clicked show contents of this directory in file_list
-                    li.addEventListener("click", function(){
-                        DisplayContents(owner, repo, element.path)
+                    li.addEventListener("click", () => {
+                        DisplayGitHubBlog(owner, repo, element.path, depth + 1)
                     })
                 }
                 else if (element.type == 'file'){
@@ -56,10 +121,71 @@
 
                 file_list.appendChild(li)
             });
+
+            // Set the functionality of the back button according to the current path
+            // Displays the contents of the previous node in the path
+            const button = document.getElementById("back")
+            button.addEventListener('click', () => {
+                if (depth == 0) { ViewBlogs() }
+                else{
+                    const index = path.lastIndexOf('/')
+                    DisplayGitHubBlog(owner, repo, path.slice(0, index + 1), depth)
+                }
+            })
         }
         catch (error)
         {
             console.error(`Error fetching content from ${url}:`, error)
         }
+    }
+
+    function DisplayDirectory(directory, path, depth){
+        // Remove all of the nodes that point to items further in the tree
+        const displayList = directory.filter(element => !element.path.includes('/'))
+
+        // Clear the existing list
+        file_list.innerHTML = ''
+
+        displayList.forEach(element => {
+            let li = document.createElement('li')
+            const name = element.path
+            li.classList.add("link")
+            li.innerText = name
+
+            if (element.type == 'dir'){
+                // When clicked show contents of this directory in file_list
+                li.addEventListener("click", () => {
+                    DisplayDirectory(owner, repo, element.path, depth + 1)
+                })
+            }
+            // else if (element.type == 'file'){
+            //     // When clicked display contents of file on webpage (if markdown)
+            //     const file_type = name.slice((name.lastIndexOf(".") - 1 >>> 0) + 2)
+            //     if (file_type == "md"){
+            //         li.addEventListener("click", function(){
+            //             file_display.src = `https://raw.githubusercontent.com/${owner}/${repo}/refs/heads/main/${element.path}`
+            //         })
+            //     }
+            // }
+
+            file_list.appendChild(li)
+        });
+    }
+
+    // Allow the user to select one of the existing blogs to view
+    function ViewBlogs(){
+        // Clear the existing list
+        file_list.innerHTML = ''
+
+        // Display each of the blogs as an option
+        blogs.forEach(element => {
+            let li = document.createElement('li')
+            li.classList.add("link")
+            li.innerText = element.name
+
+            li.onclick = element.displayBlog
+
+            file_list.appendChild(li)
+        });
     }
 </script>
