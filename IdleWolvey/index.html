@@ -111,7 +111,15 @@
         selectable: false,
         evented: false
     });
-    canvas.add(scoreLabel, cpsLabel);
+    const credits = new fabric.Text('Created by:\nJacob Robinson\nSC Klein', {
+        fontFamily: 'Arial, sans-serif',
+        fontSize: 12,
+        fill: '#aaaaaa',
+        textAlign: 'left',
+        selectable: false,
+        evented: false
+    });
+    canvas.add(scoreLabel, cpsLabel, credits);
 
     // 3. Store Title
     const storeTitle = new fabric.Text('STORE', {
