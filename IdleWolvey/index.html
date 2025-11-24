@@ -27,8 +27,12 @@
 <script src="logic.js"></script>
 <script src="styling.js"></script>
 <script>
-    window.onload = function(){
-        document.getElementById("my_audio").play();
+    let playing = false;
+    window.onclick = function(){
+        if (!playing){
+            document.getElementById("my_audio").play();
+            playing = true
+        }
     }
     const canvas = new fabric.Canvas('c', {
         selection: false, // Disable the blue group selection box globally
