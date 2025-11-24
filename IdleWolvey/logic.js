@@ -217,7 +217,7 @@ function crisis()
 function startEventTimers(){
     // tolmet timer
     startRandomIntervalLoop(tolmet, 2, 4)
-    startRandomIntervalLoop(crisis, 0.1, 0.1)
+    startRandomIntervalLoop(crisis, 3, 5)
 }
 
 function showRedAlert(messageText, subtext, color1, color2) {
