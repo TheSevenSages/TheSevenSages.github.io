@@ -20,18 +20,16 @@
     <div id="canvas-container" style="margin: 0%; padding: 0%; width: 100vw; height: 100vh;">
         <canvas id="c" width="800" height="600" style="display: block; margin: 0%; padding: 0%;"></canvas>
     </div>
+    <audio id="my_audio" src="bgm.mp3" loop="loop"></audio>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 <script src="particles.js"></script>
 <script src="logic.js"></script>
 <script src="styling.js"></script>
 <script>
-    myAudio = new Audio('bgm.mp3');
-    myAudio.addEventListener('ended', function() {
-        this.currentTime = 0;
-        this.play();
-    }, false);
-    myAudio.play()
+    window.onload = function(){
+        document.getElementById("my_audio").play();
+    }
     const canvas = new fabric.Canvas('c', {
         selection: false, // Disable the blue group selection box globally
         hoverCursor: 'default',
