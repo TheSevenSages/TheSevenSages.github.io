@@ -34,6 +34,21 @@
             playing = true
         }
     }
+    function crisis_bgm()
+    {
+        if (playing){
+            document.getElementById("my_audio").src = 'dancemix.mp3';
+            document.getElementById("my_audio").play();
+        }
+    }
+    function normal_bgm()
+    {
+        if (playing){
+            document.getElementById("my_audio").src = 'bgm.mp3';
+            document.getElementById("my_audio").play();
+        }
+    }
+
     const canvas = new fabric.Canvas('c', {
         selection: false, // Disable the blue group selection box globally
         hoverCursor: 'default',
@@ -781,7 +796,8 @@
         
         canvas.requestRenderAll();
     }
-    
+    const furry = new Audio('furry.mp3')
+    const alright = new Audio('alright.mp3')
     preloadAssets(assetUrls).then(loadedAssets => {
         console.log("All assets finished loading!", loadedAssets);
 
@@ -800,10 +816,12 @@
         {
             createPowerUp(`Swolvey lv${i}`, Math.pow(50, i), "Powers up clicks", assets.images["swolvey"], i, (num) => {
                 console.log('SWOLVEY BOUGHT!')
+                furry.play()
                 creditsPerClick = Math.pow(5, num)
             })
             createPowerUp(`IGDA lv${i}`, Math.pow(50, i), "Yarger likes that :)", assets.images["igda"], i, (num) => {
                 console.log('IGDA BOUGHT!')
+                alright.play()
                 igdaVisits += num
             })
         }

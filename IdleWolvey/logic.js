@@ -200,6 +200,7 @@ function crisis()
         startRandomIntervalLoop(crisis, 1, 2)
         return
     }
+    crisis_bgm()
     console.log('its a crisis!!')
     showRedAlert('ITS A CRISIS WOLVERINE!', `Austin Yarger is giving out lots of extra credit per click!`, '#11e30eff', '#0b8c16ff')
     triggerSineImageFlow(assets.images.crisis, 20, 30 * 1000, 5, 1000)
@@ -208,6 +209,7 @@ function crisis()
     // Trigger code after X seconds
     setTimeout(() => {
         active_event = 'none'
+        normal_bgm()
     }, 30 * 1000);
     startRandomIntervalLoop(crisis, minTime * Math.pow(0.85, igdaVisits), maxTime * Math.pow(0.85, igdaVisits))
 }
@@ -215,7 +217,7 @@ function crisis()
 function startEventTimers(){
     // tolmet timer
     startRandomIntervalLoop(tolmet, 2, 4)
-    startRandomIntervalLoop(crisis, 3, 5)
+    startRandomIntervalLoop(crisis, 0.1, 0.1)
 }
 
 function showRedAlert(messageText, subtext, color1, color2) {
