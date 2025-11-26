@@ -1,17 +1,22 @@
 <!-- TO DELETE WHEN PAGE IS DONE -->
 <script type="text/javascript" src="../js/jquery-3.6.4.min.js"></script>
 <link rel = "stylesheet" href = "../css/style.css">
+
+<!-- Blog style -->
+<link rel = "stylesheet" href = "../css/blog.css">
 <!-- Needed to use the "md-block" HTML item -->
 <script type="module" src="https://md-block.verou.me/md-block.js"></script>
 
 <h1 style="text-align: center;">Blogs</h1>
 
-<div>
-    <button id="back">BACK</button>
-    <ul id="file_list" style="list-style-type: none;"></ul>
+<div id="flex_container">
+    <div>
+        <button id="back">BACK</button>
+        <ul id="file_list"></ul>
+    </div>
+    
+    <md-block id="file_display" src="https://raw.githubusercontent.com/TheSevenSages/SageXR/refs/heads/main/DEVLOG/November%202025/11-19.md"></md-block>
 </div>
-<md-block id="file_display" src="https://raw.githubusercontent.com/TheSevenSages/SageXR/refs/heads/main/DEVLOG/November%202025/11-19.md"></md-block>
-
 
 <script>
 
@@ -21,18 +26,19 @@
             pathToBlog: "DEVLOG",
             tree: null,
             displayBlog: async function(){
-                const self = blogs[0] // IMPORTANT: Update this for the index of each blog
-                
                 // Load blog tree
-                if (!self.tree)
+                if (!this.tree)
                 {
-                    self.tree = await GetGitHubTree("TheSevenSages", self.name, self.pathToBlog)
-                    console.log(self.tree)
+                    this.tree = await GetGitHubTree("TheSevenSages", this.name, this.pathToBlog)
+                    console.log(this.tree)
                 }
-                else { console.log(self.name + ' tree already loaded!')}
+                else { console.log(this.name + ' tree already loaded!')}
 
-                DisplayDirectory(self.tree, "", 0)
-                // DisplayGitHubBlog("TheSevenSages", "SageXR", "DEVLOG", 0)
+                DisplayBlogTree(this, "")
+            },
+            getFileSrc: function(path){
+                // We can use 'this' here so long as 
+                return GetGitHubRawFile("TheSevenSages", this.name, this.pathToBlog + '/' + path)
             }
         }
     ]
@@ -82,94 +88,61 @@
         }
     }
 
-    // Gets all of the folders from the given GitHub repo
-    // Depth tracks how far deep we are to ensure we can never go back farther up than when we started
-    async function DisplayGitHubBlog(owner, repo, path, depth){
-        const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`
-
-        try
-        {
-            const response = await fetch(url)
-            if (!response.ok) { throw new Error('HTTP error! status ' + response.status) }
-
-            const contents = await response.json()
-
-            // Clear the existing list
-            file_list.innerHTML = ''
-
-            contents.forEach(element => {
-                let li = document.createElement('li')
-                const name = element.name
-                li.classList.add("link")
-                li.innerText = name
-
-                if (element.type == 'dir'){
-                    // When clicked show contents of this directory in file_list
-                    li.addEventListener("click", () => {
-                        DisplayGitHubBlog(owner, repo, element.path, depth + 1)
-                    })
-                }
-                else if (element.type == 'file'){
-                    // When clicked display contents of file on webpage (if markdown)
-                    const file_type = name.slice((name.lastIndexOf(".") - 1 >>> 0) + 2)
-                    if (file_type == "md"){
-                        li.addEventListener("click", function(){
-                            file_display.src = `https://raw.githubusercontent.com/${owner}/${repo}/refs/heads/main/${element.path}`
-                        })
-                    }
-                }
-
-                file_list.appendChild(li)
-            });
-
-            // Set the functionality of the back button according to the current path
-            // Displays the contents of the previous node in the path
-            const button = document.getElementById("back")
-            button.addEventListener('click', () => {
-                if (depth == 0) { ViewBlogs() }
-                else{
-                    const index = path.lastIndexOf('/')
-                    DisplayGitHubBlog(owner, repo, path.slice(0, index + 1), depth)
-                }
-            })
-        }
-        catch (error)
-        {
-            console.error(`Error fetching content from ${url}:`, error)
-        }
+    // Gets the link to a file stored on GitHub's raw contents
+    function GetGitHubRawFile(owner, repo, pathToFile){
+        return `https://raw.githubusercontent.com/${owner}/${repo}/refs/heads/main/${pathToFile}`
     }
 
-    function DisplayDirectory(directory, path, depth){
-        // Remove all of the nodes that point to items further in the tree
-        const displayList = directory.filter(element => !element.path.includes('/'))
+    // Displays all the nodes in the given blog's file tree at the specified path
+    function DisplayBlogTree(blog, path){
+
+        const directory = blog.tree
+        // Only display the nodes that are at the same point in the tree as us
+        const displayList = directory.filter(element => {
+            // If the node is not in the current path at all, don't include it
+            if (!element.path.includes(path)) { return false }
+            // If the node DOES include the path but goes deeper in the tree than us don't include it
+            if (element.path.substring(path.length + 1).includes('/')) { return false }
+            return true
+        })
 
         // Clear the existing list
         file_list.innerHTML = ''
 
         displayList.forEach(element => {
             let li = document.createElement('li')
-            const name = element.path
+            const name = element.path.substring(path.length + (path == "" ? 0 : 1))
             li.classList.add("link")
             li.innerText = name
 
             if (element.type == 'dir'){
                 // When clicked show contents of this directory in file_list
                 li.addEventListener("click", () => {
-                    DisplayDirectory(owner, repo, element.path, depth + 1)
+                    DisplayBlogTree(blog, element.path)
                 })
             }
-            // else if (element.type == 'file'){
-            //     // When clicked display contents of file on webpage (if markdown)
-            //     const file_type = name.slice((name.lastIndexOf(".") - 1 >>> 0) + 2)
-            //     if (file_type == "md"){
-            //         li.addEventListener("click", function(){
-            //             file_display.src = `https://raw.githubusercontent.com/${owner}/${repo}/refs/heads/main/${element.path}`
-            //         })
-            //     }
-            // }
+            else if (element.type == 'file'){
+                // When clicked display contents of file on webpage (if markdown)
+                const file_type = name.slice((name.lastIndexOf(".") - 1 >>> 0) + 2)
+                if (file_type == "md"){
+                    li.addEventListener("click", function(){
+                        file_display.src = blog.getFileSrc(element.path)
+                    })
+                }
+            }
 
             file_list.appendChild(li)
         });
+
+        // Set the functionality of the back button according to the current path
+        // Displays the contents of the previous node in the path
+        const button = document.getElementById("back")
+        button.onclick = () => {
+            if (path == "") { ViewBlogs() }
+            else{
+                DisplayBlogTree(blog, path.substring(0, path.lastIndexOf('/')))
+            }
+        }
     }
 
     // Allow the user to select one of the existing blogs to view
@@ -183,7 +156,9 @@
             li.classList.add("link")
             li.innerText = element.name
 
-            li.onclick = element.displayBlog
+            li.onclick = () => {
+                element.displayBlog()
+            }
 
             file_list.appendChild(li)
         });

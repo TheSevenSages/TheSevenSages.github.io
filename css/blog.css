@@ -1,0 +1,21 @@
+@charset "UTF-8";
+/* CSS Document */
+#flex_container{
+        display: flex;
+}
+#file_list{
+        background-color: aquamarine;
+        list-style-type: circle;
+
+        display: flexbox;
+        width: auto;
+        float: left;
+}
+#file_display{
+        background-color: red;
+
+        display: flexbox;
+        width: auto;
+        max-width: 70%;
+        float: right;
+}
