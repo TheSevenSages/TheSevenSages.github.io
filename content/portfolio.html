@@ -511,6 +511,12 @@
 <script>
         $(document).ready(function(){
 
+                // Open linked panel if one exists
+                var args = window.location.hash.split('#');
+                var page = (args[1] && $('#' + args[1])) ? args[1] : "WolverineEngine";
+                var target = $('#' + page);
+                SlidePanel(target);
+
                 // opens the modal
                 $('.portfolio_img').click(function(){
                         ActivateModal(this);
@@ -531,6 +537,8 @@
 
         // activates the correct panel
         function SlidePanel(panel){
+                history.replaceState(null, "", "/portfolio" + '#' + panel.attr('id'))
+
                 var oldPanel = $('.active_panel');
                 oldPanel.fadeToggle("fast");
                 oldPanel.removeClass("active_panel");

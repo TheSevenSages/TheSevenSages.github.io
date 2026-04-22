@@ -4,8 +4,20 @@ var currMenuOption;
 // on document load...
 $(document).ready(function(){
 
-        MenuClick($('#menu_home'), false);
-        $('#menu_home').addClass("current_tab");
+        // support direct links like /portfolio (redirected via portfolio/index.html to /#portfolio)
+        var args = window.location.hash.split('#');
+        var page = (args[1] && $('#menu_' + args[1]).length) ? args[1] : 'home';
+        var target = $('#menu_' + page);
+
+        MenuClick(target, false);
+        target.addClass("current_tab");
+
+        // replace the hash-based redirect URL with the clean path
+        var hash = "";
+        args.slice(2).forEach(element => {
+                hash += "#" + element
+        });
+        history.replaceState(null, '', page === 'home' ? '/' : '/' + page + hash);
 
         // switches content and activates transition
         $('.menu_link').click(function(){
@@ -40,22 +52,23 @@ function MenuClick(source, animate) {
 
 // changes content to page specified by source
 function ChangeContent(source, animate) {
-        var sourceFile = $(source).attr('id').replace('menu_', '');
-        sourceFile = sourceFile.replace('..', '') + '.html';
+        var sourceName = $(source).attr('id').replace('menu_', '');
+        var sourceFile = sourceName.replace('..', '') + '.html';
 
         // animate the transitions
         if (animate) {
                 $('#content').fadeOut(500, function(){
                         $.get('content/' + sourceFile, function(data) {
-                                $('#content').html(data); 
+                                $('#content').html(data);
                         });
                 });
                 $('#content').fadeIn(500);
         }
         else {
                 $.get('content/' + sourceFile, function(data) {
-                        $('#content').html(data); 
+                        $('#content').html(data);
                 });
         }
-}
 
+        history.pushState(null, '', sourceName === 'home' ? '/' : '/' + sourceName);
+}
